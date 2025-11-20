@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/ocean-craft/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/ocean-craft/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/ocean-craft",
+  "projects": {
+    "ocean-craft": {
+      "type": "application",
+      "root": "apps/ocean-craft",
+      "entryFile": "main",
+      "sourceRoot": "apps/ocean-craft/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ocean-craft/tsconfig.app.json"
+      }
+    },
+    "ocean-craft-batch": {
+      "type": "application",
+      "root": "apps/ocean-craft-batch",
+      "entryFile": "main",
+      "sourceRoot": "apps/ocean-craft-batch/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ocean-craft-batch/tsconfig.app.json"
+      }
+    }
   }
 }
