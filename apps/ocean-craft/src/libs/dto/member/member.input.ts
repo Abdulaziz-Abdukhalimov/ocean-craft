@@ -25,6 +25,10 @@ export class MemberInput {
 	@IsOptional()
 	@Field(() => MemberAuthType, { nullable: true })
 	memberAuthType?: MemberAuthType;
+
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	memberEmail?: string;
 }
 
 @InputType()

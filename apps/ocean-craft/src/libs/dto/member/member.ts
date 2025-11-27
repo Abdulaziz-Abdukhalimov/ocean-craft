@@ -16,13 +16,13 @@ export class Member {
 	@Field(() => MemberAuthType)
 	memberAuthType: MemberAuthType;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	memberEmail: string;
 
 	@Field(() => String)
 	memberPhone: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	memberTelegram: string;
 
 	@Field(() => String)
