@@ -8,12 +8,16 @@ import { Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { T } from '../../libs/types/common';
+import { ViewService } from '../view/view.service';
+import { ViewInput } from '../../libs/dto/view/view.input';
+import { ViewGroup } from '../../libs/enums/view.enum';
 
 @Injectable()
 export class MemberService {
 	constructor(
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		private authService: AuthService,
+		private viewService: ViewService,
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
@@ -81,23 +85,23 @@ export class MemberService {
 		const targetMember = await this.memberModel.findOne(search).lean().exec();
 		if (!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-		// if (memberId) {
-		// 	const viewInput: ViewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
-		// 	const newView = await this.viewService.recordView(viewInput);
-		// 	if (newView) {
-		// 		await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
-		// 		targetMember.memberViews++;
-		// 	}
+		if (memberId) {
+			const viewInput: ViewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
+			const newView = await this.viewService.recordView(viewInput);
+			if (newView) {
+				await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+				targetMember.memberViews++;
+			}
 
-		// 	//meLiked
-		// 	const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
-		// 	targetMember.meLiked = await this.likeService.checkLikeExistance(likeInput);
+			// 	//meLiked
+			// 	const likeInput = { memberId: memberId, likeRefId: targetId, likeGroup: LikeGroup.MEMBER };
+			// 	targetMember.meLiked = await this.likeService.checkLikeExistance(likeInput);
 
-		// 	//meFollwed
+			// 	//meFollwed
 
-		// 	targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
-		// }
-
+			// 	targetMember.meFollowed = await this.checkSubscription(memberId, targetId);
+			// }
+		}
 		return targetMember;
 	}
 }
