@@ -85,7 +85,7 @@ export class Member {
 	updatedAt: Date;
 
 	@Field(() => String, { nullable: true })
-	accsessToken: string;
+	accessToken: string;
 
 	/* Aggregation */
 }
