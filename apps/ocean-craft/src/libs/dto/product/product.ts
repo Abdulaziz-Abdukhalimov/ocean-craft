@@ -1,0 +1,72 @@
+import { Field, Int, Float, ObjectType, InputType, registerEnumType } from '@nestjs/graphql';
+import type { ObjectId } from 'mongoose';
+import { ProductCategory, ProductCondition, ProductCurrency, ProductStatus } from '../../enums/product.enum';
+
+@ObjectType()
+export class Product {
+	@Field(() => String)
+	_id: ObjectId;
+
+	@Field(() => String)
+	sellerId: ObjectId;
+
+	@Field(() => ProductCategory)
+	productCategory: ProductCategory;
+
+	@Field(() => ProductCondition)
+	productCondition: ProductCondition;
+
+	@Field(() => ProductStatus)
+	productStatus: ProductStatus;
+
+	@Field(() => String)
+	productTitle: string;
+
+	@Field(() => String, { nullable: true })
+	productDescription?: string;
+
+	@Field(() => String)
+	productBrand: string;
+
+	@Field(() => String)
+	productModel: string;
+
+	@Field(() => Float)
+	productPrice: number;
+
+	@Field(() => ProductCurrency)
+	productCurrency: ProductCurrency;
+
+	@Field(() => [String])
+	productImages: string[];
+
+	@Field(() => String)
+	productAddress: string;
+
+	@Field(() => Int)
+	productViews: number;
+
+	@Field(() => Int)
+	productLikes: number;
+
+	@Field(() => Int)
+	productComments: number;
+
+	@Field(() => Int)
+	productRank: number;
+
+	@Field(() => Boolean)
+	productRent: boolean;
+
+	@Field(() => Date, { nullable: true })
+	soldAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date;
+
+	@Field(() => Date)
+	createdAt: Date;
+
+	@Field(() => Date)
+	updatedAt: Date;
+}
