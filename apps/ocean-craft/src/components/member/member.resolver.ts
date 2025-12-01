@@ -95,7 +95,7 @@ export class MemberResolver {
 		return await this.memberService.updateMemberByAdmin(input);
 	}
 
-	//UPLOADER
+	// ------- UPLOADER ------
 	@UseGuards(AuthGuard)
 	@Mutation(() => String)
 	public async imageUploader(
@@ -119,8 +119,6 @@ export class MemberResolver {
 		try {
 			// Upload to Cloudinary
 			const cloudinaryUrl = await uploadToCloudinary(stream, target, imageName);
-
-			// Returns: "https://res.cloudinary.com/your-cloud/image/upload/v1/members/uuid-123.jpg"
 			return cloudinaryUrl;
 		} catch (error) {
 			console.error('Upload error:', error);
