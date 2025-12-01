@@ -13,14 +13,14 @@ export class ProductService {
 		private memberService: MemberService,
 	) {}
 
-	public async createProperty(input: ProductInput): Promise<Product> {
+	public async createProduct(input: ProductInput): Promise<Product> {
 		try {
 			const result = await this.productModel.create(input);
 			//increase memberProperties
 			await this.memberService.memberStatsEditor({ _id: result.sellerId, targetKey: 'memberProducts', modifier: 1 });
 			return result;
 		} catch (err) {
-			console.log('Error , createProperty:', err.message);
+			console.log('Error , createProduct:', err.message);
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 	}

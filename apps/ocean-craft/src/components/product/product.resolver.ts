@@ -17,12 +17,12 @@ export class ProductResolver {
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)
 	@Mutation(() => Product)
-	public async createProperty(
+	public async createProduct(
 		@Args('input') input: ProductInput,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Product> {
-		console.log('Mutation: createProperty');
+		console.log('Mutation: createProduct');
 		input.sellerId = memberId;
-		return await this.productService.createProperty(input);
+		return await this.productService.createProduct(input);
 	}
 }
