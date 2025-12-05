@@ -50,6 +50,15 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 	};
 };
 
+export const lookupMember = {
+	$lookup: {
+		from: 'members',
+		localField: 'sellerId',
+		foreignField: '_id',
+		as: 'memberData',
+	},
+};
+
 export const availableProductSorts = [
 	'createdAt',
 	'updatedAt',
