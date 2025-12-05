@@ -1,6 +1,7 @@
 import { Field, Int, Float, ObjectType, InputType, registerEnumType } from '@nestjs/graphql';
 import type { ObjectId } from 'mongoose';
 import { ProductCategory, ProductCondition, ProductCurrency, ProductStatus } from '../../enums/product.enum';
+import { Member } from '../member/member';
 
 @ObjectType()
 export class Product {
@@ -69,4 +70,9 @@ export class Product {
 
 	@Field(() => Date)
 	updatedAt: Date;
+
+	// from aggregation
+
+	@Field(() => Member, { nullable: true })
+	memberData?: Member;
 }
