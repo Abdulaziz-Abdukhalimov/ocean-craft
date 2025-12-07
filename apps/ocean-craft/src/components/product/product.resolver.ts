@@ -90,4 +90,22 @@ export class ProductResolver {
 		console.log('Query: getAllProductsByAdmin');
 		return await this.productService.getAllProductsByAdmin(input);
 	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => Product)
+	public async updateProductByAdmin(@Args('input') input: ProductUpdate): Promise<Product> {
+		console.log('Muation: updateProductByAdmin');
+		input._id = shapeIntoMongoObjectId(input._id);
+		return await this.productService.updateProductByAdmin(input);
+	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => Product)
+	public async removeProductByAdmin(@Args('propertyId') input: string): Promise<Product> {
+		console.log('Mutation: removeProductByAdmin');
+		const propertyId = shapeIntoMongoObjectId(input);
+		return await this.productService.removeProductByAdmin(propertyId);
+	}
 }
