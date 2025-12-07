@@ -48,7 +48,7 @@ export class Product {
 	@Field(() => Float, { nullable: true })
 	productLength?: number;
 
-	@Field(() => ProductPriceType)
+	@Field(() => ProductPriceType, { nullable: true })
 	productPriceType: ProductPriceType;
 
 	@Field(() => ProductRentPeriod, { nullable: true })

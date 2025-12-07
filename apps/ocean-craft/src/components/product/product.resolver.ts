@@ -8,7 +8,12 @@ import { AuthMember } from '../auth/decoraters/authMember.decorater';
 import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Product, Products } from '../../libs/dto/product/product';
 import { ObjectId } from 'mongoose';
-import { ProductInput, ProductsInquiry, SellerProductsInquiry } from '../../libs/dto/product/product.input';
+import {
+	AllProductsInquiry,
+	ProductInput,
+	ProductsInquiry,
+	SellerProductsInquiry,
+} from '../../libs/dto/product/product.input';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { ProductUpdate } from '../../libs/dto/product/product.update';
@@ -72,5 +77,17 @@ export class ProductResolver {
 	): Promise<Products> {
 		console.log('Query: getSellerProducts');
 		return await this.productService.getSellerProducts(memberId, input);
+	}
+
+	/** ADMIN **/
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Query((returns) => Products)
+	public async getAllProductsByAdmin(
+		@Args('input') input: AllProductsInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Products> {
+		console.log('Query: getAllProductsByAdmin');
+		return await this.productService.getAllProductsByAdmin(input);
 	}
 }
