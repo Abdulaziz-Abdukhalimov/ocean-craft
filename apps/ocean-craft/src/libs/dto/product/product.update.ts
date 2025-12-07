@@ -1,7 +1,14 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsInt, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
 import { ObjectId } from 'mongoose';
-import { ProductCategory, ProductCondition, ProductCurrency, ProductStatus } from '../../enums/product.enum';
+import {
+	ProductCategory,
+	ProductCondition,
+	ProductCurrency,
+	ProductPriceType,
+	ProductRentPeriod,
+	ProductStatus,
+} from '../../enums/product.enum';
 
 @InputType()
 export class ProductUpdate {
@@ -42,6 +49,29 @@ export class ProductUpdate {
 	productModel?: string;
 
 	@IsOptional()
+	@Length(3, 50)
+	@Field(() => String, { nullable: true })
+	productEngineType?: string;
+
+	@IsOptional()
+	@Min(0)
+	@Field(() => Number, { nullable: true })
+	productSpeed?: number;
+
+	@IsOptional()
+	@Min(0)
+	@Field(() => Number, { nullable: true })
+	productLength?: number;
+
+	@IsOptional()
+	@Field(() => ProductPriceType, { nullable: true })
+	productPriceType?: ProductPriceType;
+
+	@IsOptional()
+	@Field(() => ProductRentPeriod, { nullable: true })
+	productRentPeriod?: ProductRentPeriod;
+
+	@IsOptional()
 	@Field(() => Number, { nullable: true })
 	productPrice?: number;
 
@@ -65,4 +95,8 @@ export class ProductUpdate {
 	soldAt?: Date;
 
 	deletedAt?: Date;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	buildAt?: Date;
 }

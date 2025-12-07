@@ -1,6 +1,13 @@
 import { Field, Int, Float, ObjectType, InputType, registerEnumType } from '@nestjs/graphql';
 import type { ObjectId } from 'mongoose';
-import { ProductCategory, ProductCondition, ProductCurrency, ProductStatus } from '../../enums/product.enum';
+import {
+	ProductCategory,
+	ProductCondition,
+	ProductCurrency,
+	ProductPriceType,
+	ProductRentPeriod,
+	ProductStatus,
+} from '../../enums/product.enum';
 import { Member, TotalCounter } from '../member/member';
 
 @ObjectType()
@@ -32,6 +39,21 @@ export class Product {
 	@Field(() => String)
 	productModel: string;
 
+	@Field(() => String, { nullable: true })
+	productEngineType?: string;
+
+	@Field(() => Float, { nullable: true })
+	productSpeed?: number;
+
+	@Field(() => Float, { nullable: true })
+	productLength?: number;
+
+	@Field(() => ProductPriceType)
+	productPriceType: ProductPriceType;
+
+	@Field(() => ProductRentPeriod, { nullable: true })
+	productRentPeriod?: ProductRentPeriod;
+
 	@Field(() => Float)
 	productPrice: number;
 
@@ -61,6 +83,9 @@ export class Product {
 
 	@Field(() => Date, { nullable: true })
 	soldAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	buildAt?: Date;
 
 	@Field(() => Date, { nullable: true })
 	deletedAt?: Date;

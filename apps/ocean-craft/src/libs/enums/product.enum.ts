@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum ProductCategory {
+	YACHT = 'YACHT',
 	BOAT = 'BOAT',
 	SNOWMOIBILE = 'SNOWMOBILE',
 	ATV = 'ATV',
@@ -45,4 +46,22 @@ export enum InquiryItemType {
 }
 registerEnumType(InquiryItemType, {
 	name: 'InquiryItemType',
+});
+
+export enum ProductPriceType {
+	FORSALE = 'FORSALE',
+	RENT = 'RENT',
+}
+registerEnumType(ProductPriceType, {
+	name: 'ProductPriceType',
+});
+
+export enum ProductRentPeriod {
+	HOUR = 'HOUR',
+	DAY = 'DAY',
+	WEEK = 'WEEK',
+	MONTH = 'MONTH',
+}
+registerEnumType(ProductRentPeriod, {
+	name: 'ProductRentPeriod',
 });

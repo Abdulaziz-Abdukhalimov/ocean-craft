@@ -1,6 +1,13 @@
 import { Schema } from 'mongoose';
 import { ref } from 'process';
-import { ProductCategory, ProductCondition, ProductCurrency, ProductStatus } from '../libs/enums/product.enum';
+import {
+	ProductCategory,
+	ProductCondition,
+	ProductCurrency,
+	ProductPriceType,
+	ProductRentPeriod,
+	ProductStatus,
+} from '../libs/enums/product.enum';
 
 const ProductSchema = new Schema(
 	{
@@ -40,6 +47,27 @@ const ProductSchema = new Schema(
 			type: String,
 			required: true,
 		},
+		productEngineType: {
+			type: String,
+		},
+		productSpeed: {
+			type: Number,
+		},
+		productLength: {
+			type: Number,
+		},
+		productPriceType: {
+			type: String,
+			enum: ProductPriceType,
+			required: true,
+		},
+		productRentPeriod: {
+			type: String,
+			enum: ProductRentPeriod,
+			required: function () {
+				return this.productPriceType === ProductPriceType.RENT;
+			},
+		},
 		productPrice: {
 			type: Number,
 			required: true,
@@ -78,6 +106,9 @@ const ProductSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
+		buildAt: {
+			type: Date,
+		},
 		soldAt: {
 			type: Date,
 		},
@@ -88,5 +119,5 @@ const ProductSchema = new Schema(
 	},
 	{ timestamps: true, collection: 'products' },
 );
-ProductSchema.index({ productCategory: 1, productTitle: 1, productAddress: 1, productPrice: 1 });
+ProductSchema.index({ productCategory: 1, productTitle: 1, productAddress: 1, productPrice: 1, productPriceType: 1 });
 export default ProductSchema;

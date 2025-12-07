@@ -5,13 +5,14 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Args, Mutation } from '@nestjs/graphql';
 import { AuthMember } from '../auth/decoraters/authMember.decorater';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { Product, Products } from '../../libs/dto/product/product';
 import { ObjectId } from 'mongoose';
 import { ProductInput, ProductsInquiry, SellerProductsInquiry } from '../../libs/dto/product/product.input';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { ProductUpdate } from '../../libs/dto/product/product.update';
+import { ProductPriceType } from '../../libs/enums/product.enum';
 
 @Resolver()
 export class ProductResolver {
@@ -26,6 +27,9 @@ export class ProductResolver {
 	): Promise<Product> {
 		console.log('Mutation: createProduct');
 		input.sellerId = memberId;
+		if (input.productPriceType === ProductPriceType.RENT && !input.productRentPeriod) {
+			throw new BadRequestException('Rent period is required for rental products');
+		}
 		return await this.productService.createProduct(input);
 	}
 
