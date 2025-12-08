@@ -32,6 +32,10 @@ export enum EventStatus {
 	PENDING = 'PENDING',
 	APPROVED = 'APPROVED',
 	REJECTED = 'REJECTED',
+	ACTIVE = 'ACTIVE',
+	CANCELLED = 'CANCELLED',
+	COMPLETED = 'COMPLETED',
+	DELETED = 'DELETED',
 }
 registerEnumType(EventStatus, {
 	name: 'EventStatus',
@@ -43,4 +47,27 @@ export enum EventScheduleType {
 }
 registerEnumType(EventScheduleType, {
 	name: 'EventScheduleType',
+});
+
+export enum EventDayOfWeek {
+	MONDAY = 'MONDAY',
+	TUESDAY = 'TUESDAY',
+	WEDNESDAY = 'WEDNESDAY',
+	THURSDAY = 'THURSDAY',
+	FRIDAY = 'FRIDAY',
+	SATURDAY = 'SATURDAY',
+	SUNDAY = 'SUNDAY',
+}
+registerEnumType(EventDayOfWeek, {
+	name: 'EventDayOfWeek',
+});
+
+export enum EventExperienceLevel {
+	BEGINNER = 'BEGINNER',
+	INTERMEDIATE = 'INTERMEDIATE',
+	ADVANCED = 'ADVANCED',
+	ALL_LEVELS = 'ALL_LEVELS',
+}
+registerEnumType(EventExperienceLevel, {
+	name: 'EventExperienceLevel',
 });

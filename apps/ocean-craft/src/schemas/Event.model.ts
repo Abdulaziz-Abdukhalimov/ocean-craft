@@ -3,6 +3,8 @@ import {
 	EventAvailabilityStatus,
 	EventCategory,
 	EventCurrency,
+	EventDayOfWeek,
+	EventExperienceLevel,
 	EventScheduleType,
 	EventStatus,
 } from '../libs/enums/event.enum';
@@ -67,18 +69,57 @@ const EventSchema = new Schema(
 			type: {
 				type: String,
 				enum: EventScheduleType,
-				default: EventScheduleType.RECURRING,
+				required: true,
 			},
 			daysOfWeek: {
 				type: [String],
+				enum: EventDayOfWeek,
 			},
-			timeSlots: {
-				type: [String],
+			timeSlots: [
+				{
+					startTime: {
+						type: String,
+						required: true,
+					},
+					endTime: {
+						type: String,
+						required: true,
+					},
+					_id: false,
+				},
+			],
+			specificDates: [
+				{
+					date: {
+						type: Date,
+						required: true,
+					},
+					startTime: {
+						type: String,
+						required: true,
+					},
+					endTime: {
+						type: String,
+						required: true,
+					},
+					_id: false,
+				},
+			],
+			_id: false,
+		},
+		eventPeriod: {
+			startDate: {
+				type: Date,
+				required: true,
 			},
-			specificDates: {
-				type: [Date],
+			endDate: {
+				type: Date,
+				required: true,
 			},
 			_id: false,
+		},
+		eventRegistrationDeadline: {
+			type: Date,
 		},
 		eventContact: {
 			phone: {
@@ -104,10 +145,40 @@ const EventSchema = new Schema(
 		eventCapacity: {
 			type: Number,
 			required: true,
+			default: 0,
 		},
-		eventDuration: {
-			type: String,
+		eventDurationMinutes: {
+			type: Number,
 			required: true,
+		},
+		eventRequirements: {
+			minAge: {
+				type: Number,
+			},
+			maxAge: {
+				type: Number,
+			},
+			bringItems: {
+				type: [String],
+			},
+			experienceLevel: {
+				type: String,
+				enum: EventExperienceLevel,
+			},
+			_id: false,
+		},
+		eventNotes: {
+			type: {
+				ko: { type: String },
+				en: { type: String },
+				uz: { type: String },
+				ru: { type: String },
+			},
+			_id: false,
+		},
+		eventCancellationPolicy: {
+			type: String,
+			maxlength: 1000,
 		},
 		eventStatus: {
 			type: String,
@@ -146,6 +217,7 @@ const EventSchema = new Schema(
 EventSchema.index({ eventCategory: 1, 'eventLocation.city': 1, eventPrice: 1 });
 EventSchema.index({ businessId: 1, eventStatus: 1 });
 EventSchema.index({ eventStatus: 1, eventAvailabilityStatus: 1 });
+EventSchema.index({ 'eventPeriod.startDate': 1, 'eventPeriod.endDate': 1 });
 EventSchema.index({
 	'eventTitle.ko': 'text',
 	'eventTitle.en': 'text',

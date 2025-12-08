@@ -9,39 +9,41 @@ const InquirySchema = new Schema(
 			required: true,
 			ref: 'Member',
 		},
-
 		// Seller/Business Information
 		sellerId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
 		},
-
 		// Item Type (Product or Event)
 		itemType: {
 			type: String,
 			enum: InquiryItemType,
 			required: true,
 		},
-
 		//  Item ID (references Product OR Event dynamically)
 		itemId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			refPath: 'itemType', // Dynamic reference!
 		},
-
 		// Inquiry Message
 		inquiryMessage: {
 			type: String,
 			required: true,
 			maxlength: 2000,
 		},
-
+		sellerReply: {
+			type: String,
+			maxlength: 2000,
+		},
 		// Read Status
 		isRead: {
 			type: Boolean,
 			default: false,
+		},
+		repliedAt: {
+			type: Date,
 		},
 	},
 	{
