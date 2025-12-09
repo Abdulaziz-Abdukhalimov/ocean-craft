@@ -11,102 +11,6 @@ import {
 	EventStatus,
 } from '../../enums/event.enum';
 
-@ObjectType()
-export class Event {
-	@Field(() => String)
-	_id: ObjectId;
-
-	@Field(() => String)
-	businessId: ObjectId;
-
-	@Field(() => Member, { nullable: true })
-	businessData?: Member;
-
-	@Field(() => MultiLanguageField)
-	eventTitle: MultiLanguageField;
-
-	@Field(() => MultiLanguageField)
-	eventDescription: MultiLanguageField;
-
-	@Field(() => EventCategory)
-	eventCategory: EventCategory;
-
-	@Field(() => String)
-	businessName: string;
-
-	@Field(() => Float)
-	eventPrice: number;
-
-	@Field(() => EventCurrency)
-	eventCurrency: EventCurrency;
-
-	@Field(() => EventLocation)
-	eventLocation: EventLocation;
-
-	@Field(() => EventSchedule)
-	eventSchedule: EventSchedule;
-
-	@Field(() => EventPeriod)
-	eventPeriod: EventPeriod;
-
-	@Field(() => Date, { nullable: true })
-	eventRegistrationDeadline?: Date;
-
-	@Field(() => EventContact)
-	eventContact: EventContact;
-
-	@Field(() => [String])
-	eventImages: string[];
-
-	@Field(() => EventAvailabilityStatus)
-	eventAvailabilityStatus: EventAvailabilityStatus;
-
-	@Field(() => Int)
-	eventCapacity: number;
-
-	@Field(() => Int)
-	eventDurationMinutes: number;
-
-	@Field(() => EventRequirements, { nullable: true })
-	eventRequirements?: EventRequirements;
-
-	@Field(() => MultiLanguageField, { nullable: true })
-	eventNotes?: MultiLanguageField;
-
-	@Field(() => String, { nullable: true })
-	eventCancellationPolicy?: string;
-
-	@Field(() => EventStatus)
-	eventStatus: EventStatus;
-
-	@Field(() => Int)
-	eventViews: number;
-
-	@Field(() => Int)
-	eventLikes: number;
-
-	@Field(() => Int)
-	eventComments: number;
-
-	@Field(() => Float)
-	eventRank: number;
-
-	@Field(() => Date, { nullable: true })
-	approvedAt?: Date;
-
-	@Field(() => Date, { nullable: true })
-	rejectedAt?: Date;
-
-	@Field(() => Date, { nullable: true })
-	deletedAt?: Date;
-
-	@Field(() => Date)
-	createdAt: Date;
-
-	@Field(() => Date)
-	updatedAt: Date;
-}
-
 // Nested Types
 @ObjectType()
 class MultiLanguageField {
@@ -202,4 +106,100 @@ class EventRequirements {
 
 	@Field(() => EventExperienceLevel, { nullable: true })
 	experienceLevel?: EventExperienceLevel;
+}
+
+@ObjectType()
+export class Event {
+	@Field(() => String)
+	_id: ObjectId;
+
+	@Field(() => String)
+	businessId: ObjectId;
+
+	@Field(() => Member, { nullable: true })
+	businessData?: Member;
+
+	@Field(() => MultiLanguageField)
+	eventTitle: MultiLanguageField;
+
+	@Field(() => MultiLanguageField)
+	eventDescription: MultiLanguageField;
+
+	@Field(() => EventCategory)
+	eventCategory: EventCategory;
+
+	@Field(() => String)
+	businessName: string;
+
+	@Field(() => Float)
+	eventPrice: number;
+
+	@Field(() => EventCurrency)
+	eventCurrency: EventCurrency;
+
+	@Field(() => EventLocation)
+	eventLocation: EventLocation;
+
+	@Field(() => EventSchedule)
+	eventSchedule: EventSchedule;
+
+	@Field(() => EventPeriod)
+	eventPeriod: EventPeriod;
+
+	@Field(() => Date, { nullable: true })
+	eventRegistrationDeadline?: Date;
+
+	@Field(() => EventContact)
+	eventContact: EventContact;
+
+	@Field(() => [String])
+	eventImages: string[];
+
+	@Field(() => EventAvailabilityStatus)
+	eventAvailabilityStatus: EventAvailabilityStatus;
+
+	@Field(() => Int)
+	eventCapacity: number;
+
+	@Field(() => Int)
+	eventDurationMinutes: number;
+
+	@Field(() => EventRequirements, { nullable: true })
+	eventRequirements?: EventRequirements;
+
+	@Field(() => MultiLanguageField, { nullable: true })
+	eventNotes?: MultiLanguageField;
+
+	@Field(() => String, { nullable: true })
+	eventCancellationPolicy?: string;
+
+	@Field(() => EventStatus)
+	eventStatus: EventStatus;
+
+	@Field(() => Int)
+	eventViews: number;
+
+	@Field(() => Int)
+	eventLikes: number;
+
+	@Field(() => Int)
+	eventComments: number;
+
+	@Field(() => Float)
+	eventRank: number;
+
+	@Field(() => Date, { nullable: true })
+	approvedAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	rejectedAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date;
+
+	@Field(() => Date)
+	createdAt: Date;
+
+	@Field(() => Date)
+	updatedAt: Date;
 }

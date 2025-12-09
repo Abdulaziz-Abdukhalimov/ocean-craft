@@ -59,6 +59,15 @@ export const lookupMember = {
 	},
 };
 
+export const lookupMember1 = {
+	$lookup: {
+		from: 'members',
+		localField: 'businessId',
+		foreignField: '_id',
+		as: 'businessData',
+	},
+};
+
 export const availableProductSorts = [
 	'createdAt',
 	'updatedAt',

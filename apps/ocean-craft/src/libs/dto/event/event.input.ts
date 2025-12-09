@@ -28,138 +28,8 @@ import {
 
 import { Direction } from '../../enums/common.enum';
 import { availableEventSorts } from '../../config';
-
-// Main Event Input
-@InputType()
-export class EventInput {
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => MultiLanguageInput)
-	eventTitle: MultiLanguageInput;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => MultiLanguageDescriptionInput)
-	eventDescription: MultiLanguageDescriptionInput;
-
-	@IsNotEmpty()
-	@Field(() => EventCategory)
-	eventCategory: EventCategory;
-
-	@IsNotEmpty()
-	@Min(0)
-	@Field(() => Float)
-	eventPrice: number;
-
-	@IsOptional()
-	@Field(() => EventCurrency, { nullable: true })
-	eventCurrency?: EventCurrency;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => EventLocationInput)
-	eventLocation: EventLocationInput;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => EventScheduleInput)
-	eventSchedule: EventScheduleInput;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => EventPeriodInput)
-	eventPeriod: EventPeriodInput;
-
-	@IsOptional()
-	@Field(() => Date, { nullable: true })
-	eventRegistrationDeadline?: Date;
-
-	@IsNotEmpty()
-	@ValidateNested()
-	@Field(() => EventContactInput)
-	eventContact: EventContactInput;
-
-	@IsNotEmpty()
-	@ArrayMinSize(1)
-	@Field(() => [String])
-	eventImages: string[];
-
-	@IsNotEmpty()
-	@IsNumber()
-	@Min(0)
-	@Field(() => Int)
-	eventCapacity: number;
-
-	@IsNotEmpty()
-	@IsNumber()
-	@Min(1)
-	@Field(() => Int)
-	eventDurationMinutes: number;
-
-	@IsOptional()
-	@ValidateNested()
-	@Field(() => EventRequirementsInput, { nullable: true })
-	eventRequirements?: EventRequirementsInput;
-
-	@IsOptional()
-	@ValidateNested()
-	@Field(() => MultiLanguageNotesInput, { nullable: true })
-	eventNotes?: MultiLanguageNotesInput;
-
-	@IsOptional()
-	@Length(10, 1000)
-	@Field(() => String, { nullable: true })
-	eventCancellationPolicy?: string;
-
-	businessId?: ObjectId;
-}
-
-// Nested Input Types
-@InputType()
-class MultiLanguageInput {
-	@IsNotEmpty()
-	@Length(1, 200)
-	@Field(() => String)
-	ko: string;
-
-	@IsNotEmpty()
-	@Length(1, 200)
-	@Field(() => String)
-	en: string;
-
-	@IsOptional()
-	@Length(1, 200)
-	@Field(() => String, { nullable: true })
-	uz?: string;
-
-	@IsOptional()
-	@Length(1, 200)
-	@Field(() => String, { nullable: true })
-	ru?: string;
-}
-
-@InputType()
-class MultiLanguageDescriptionInput {
-	@IsNotEmpty()
-	@Length(10, 2000)
-	@Field(() => String)
-	ko: string;
-
-	@IsNotEmpty()
-	@Length(10, 2000)
-	@Field(() => String)
-	en: string;
-
-	@IsOptional()
-	@Length(10, 2000)
-	@Field(() => String, { nullable: true })
-	uz?: string;
-
-	@IsOptional()
-	@Length(10, 2000)
-	@Field(() => String, { nullable: true })
-	ru?: string;
-}
+import { MultiLanguageInput, MultiLanguageInputLong } from '../common/multilanguage';
+import { Event } from './event';
 
 @InputType()
 class EventLocationInput {
@@ -465,13 +335,7 @@ export class OrdinaryInquiry {
 // Pagination Metadata
 @ObjectType()
 export class MetaData {
-	@Field(() => Int)
-	page: number;
-
-	@Field(() => Int)
-	limit: number;
-
-	@Field(() => Int)
+	@Field(() => Int, { nullable: true })
 	total: number;
 }
 
@@ -481,6 +345,150 @@ export class Events {
 	@Field(() => [Event])
 	list: Event[];
 
-	@Field(() => MetaData)
-	metaData: MetaData;
+	@Field(() => [MetaData], { nullable: true })
+	metaData: MetaData[];
 }
+
+// Main Event Input
+@InputType()
+export class EventCreate {
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => MultiLanguageInput)
+	@Field(() => MultiLanguageInput)
+	eventTitle: MultiLanguageInput;
+
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => MultiLanguageInputLong)
+	@Field(() => MultiLanguageInputLong)
+	eventDescription: MultiLanguageInputLong;
+
+	@IsNotEmpty()
+	@Field(() => EventCategory)
+	eventCategory: EventCategory;
+
+	@IsNotEmpty()
+	@Min(0)
+	@Field(() => Float)
+	eventPrice: number;
+
+	@IsOptional()
+	@Field(() => EventCurrency, { nullable: true })
+	eventCurrency?: EventCurrency;
+
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => EventLocationInput)
+	@Field(() => EventLocationInput)
+	eventLocation: EventLocationInput;
+
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => EventScheduleInput)
+	@Field(() => EventScheduleInput)
+	eventSchedule: EventScheduleInput;
+
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => EventPeriodInput)
+	@Field(() => EventPeriodInput)
+	eventPeriod: EventPeriodInput;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	eventRegistrationDeadline?: Date;
+
+	@IsNotEmpty()
+	@ValidateNested()
+	@Type(() => EventContactInput)
+	@Field(() => EventContactInput)
+	eventContact: EventContactInput;
+
+	@IsNotEmpty()
+	@ArrayMinSize(1)
+	@Field(() => [String])
+	eventImages: string[];
+
+	@IsNotEmpty()
+	@IsNumber()
+	@Min(0)
+	@Field(() => Int)
+	eventCapacity: number;
+
+	@IsNotEmpty()
+	@IsNumber()
+	@Min(1)
+	@Field(() => Int)
+	eventDurationMinutes: number;
+
+	@IsNotEmpty()
+	@Field(() => EventAvailabilityStatus)
+	eventAvailabilityStatus: EventAvailabilityStatus;
+
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => EventRequirementsInput)
+	@Field(() => EventRequirementsInput, { nullable: true })
+	eventRequirements?: EventRequirementsInput;
+
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => MultiLanguageNotesInput)
+	@Field(() => MultiLanguageNotesInput, { nullable: true })
+	eventNotes?: MultiLanguageNotesInput;
+
+	@IsOptional()
+	@Length(10, 1000)
+	@Field(() => String, { nullable: true })
+	eventCancellationPolicy?: string;
+
+	businessId?: ObjectId;
+}
+
+// Nested Input Types
+// @InputType()
+// class MultiLanguageInput {
+// 	@IsNotEmpty()
+// 	@Length(1, 200)
+// 	@Field(() => String)
+// 	ko: string;
+
+// 	@IsNotEmpty()
+// 	@Length(1, 200)
+// 	@Field(() => String)
+// 	en: string;
+
+// 	@IsOptional()
+// 	@Length(1, 200)
+// 	@Field(() => String, { nullable: true })
+// 	uz?: string;
+
+// 	@IsOptional()
+// 	@Length(1, 200)
+// 	@Field(() => String, { nullable: true })
+// 	ru?: string;
+// }
+
+// @InputType()
+// class MultiLanguageDescriptionInput {
+// 	@IsNotEmpty()
+// 	@Length(10, 2000)
+// 	@Field(() => String)
+// 	ko: string;
+
+// 	@IsNotEmpty()
+// 	@Length(10, 2000)
+// 	@Field(() => String)
+// 	en: string;
+
+// 	@IsOptional()
+// 	@Length(10, 2000)
+// 	@Field(() => String, { nullable: true })
+// 	uz?: string;
+
+// 	@IsOptional()
+// 	@Length(10, 2000)
+// 	@Field(() => String, { nullable: true })
+// 	ru?: string;
+// }

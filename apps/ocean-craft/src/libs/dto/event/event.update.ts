@@ -277,6 +277,12 @@ export class EventUpdate {
 	@Type(() => MultiLanguageDescriptionUpdateInput)
 	eventDescription?: MultiLanguageDescriptionUpdateInput;
 
+	@Field(() => String, { nullable: true })
+	@IsOptional()
+	@IsString()
+	@MaxLength(400)
+	businessName?: string;
+
 	@Field(() => EventCategory, { nullable: true })
 	@IsOptional()
 	@IsEnum(EventCategory)

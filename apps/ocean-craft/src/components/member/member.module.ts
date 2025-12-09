@@ -18,6 +18,11 @@ import { LikeModule } from '../like/like.module';
 		LikeModule,
 	],
 	providers: [MemberResolver, MemberService],
-	exports: [MemberService],
+	exports: [
+		MemberService,
+		MongooseModule.forFeature([
+			{ name: 'Member', schema: MemberSchema }, // ← Must export this!
+		]),
+	],
 })
 export class MemberModule {}
