@@ -17,24 +17,12 @@ const EventSchema = new Schema(
 			ref: 'Member',
 		},
 		eventTitle: {
-			type: {
-				ko: { type: String, required: true },
-				en: { type: String, required: true },
-				uz: { type: String },
-				ru: { type: String },
-			},
+			type: String,
 			required: true,
-			_id: false,
 		},
 		eventDescription: {
-			type: {
-				ko: { type: String, required: true },
-				en: { type: String, required: true },
-				uz: { type: String },
-				ru: { type: String },
-			},
+			type: String,
 			required: true,
-			_id: false,
 		},
 		eventCategory: {
 			type: String,
@@ -168,13 +156,7 @@ const EventSchema = new Schema(
 			_id: false,
 		},
 		eventNotes: {
-			type: {
-				ko: { type: String },
-				en: { type: String },
-				uz: { type: String },
-				ru: { type: String },
-			},
-			_id: false,
+			type: String,
 		},
 		eventCancellationPolicy: {
 			type: String,
@@ -218,10 +200,5 @@ EventSchema.index({ eventCategory: 1, 'eventLocation.city': 1, eventPrice: 1 });
 EventSchema.index({ businessId: 1, eventStatus: 1 });
 EventSchema.index({ eventStatus: 1, eventAvailabilityStatus: 1 });
 EventSchema.index({ 'eventPeriod.startDate': 1, 'eventPeriod.endDate': 1 });
-EventSchema.index({
-	'eventTitle.ko': 'text',
-	'eventTitle.en': 'text',
-	'eventDescription.ko': 'text',
-	'eventDescription.en': 'text',
-});
+
 export default EventSchema;

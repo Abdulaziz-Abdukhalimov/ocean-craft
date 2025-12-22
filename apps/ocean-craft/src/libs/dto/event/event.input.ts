@@ -13,6 +13,8 @@ import {
 	ArrayMinSize,
 	ValidateNested,
 	IsIn,
+	IsString,
+	MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ObjectId } from 'mongoose';
@@ -25,10 +27,8 @@ import {
 	EventStatus,
 	EventAvailabilityStatus,
 } from '../../enums/event.enum';
-
 import { Direction } from '../../enums/common.enum';
 import { availableEventSorts } from '../../config';
-import { MultiLanguageInput, MultiLanguageInputLong } from '../common/multilanguage';
 import { Event } from './event';
 
 @InputType()
@@ -154,29 +154,6 @@ class EventRequirementsInput {
 	@IsOptional()
 	@Field(() => EventExperienceLevel, { nullable: true })
 	experienceLevel?: EventExperienceLevel;
-}
-
-@InputType()
-class MultiLanguageNotesInput {
-	@IsOptional()
-	@Length(1, 1000)
-	@Field(() => String, { nullable: true })
-	ko?: string;
-
-	@IsOptional()
-	@Length(1, 1000)
-	@Field(() => String, { nullable: true })
-	en?: string;
-
-	@IsOptional()
-	@Length(1, 1000)
-	@Field(() => String, { nullable: true })
-	uz?: string;
-
-	@IsOptional()
-	@Length(1, 1000)
-	@Field(() => String, { nullable: true })
-	ru?: string;
 }
 
 @InputType()
@@ -332,14 +309,12 @@ export class OrdinaryInquiry {
 	limit: number;
 }
 
-// Pagination Metadata
 @ObjectType()
 export class MetaData {
 	@Field(() => Int, { nullable: true })
 	total: number;
 }
 
-// Events Response with Pagination
 @ObjectType()
 export class Events {
 	@Field(() => [Event])
@@ -349,20 +324,26 @@ export class Events {
 	metaData: MetaData[];
 }
 
-// Main Event Input
+//  MAIN EVENT CREATE INPUT
 @InputType()
 export class EventCreate {
 	@IsNotEmpty()
-	@ValidateNested()
-	@Type(() => MultiLanguageInput)
-	@Field(() => MultiLanguageInput)
-	eventTitle: MultiLanguageInput;
+	@IsString()
+	@Length(1, 200)
+	@Field(() => String)
+	eventTitle: string;
 
 	@IsNotEmpty()
-	@ValidateNested()
-	@Type(() => MultiLanguageInputLong)
-	@Field(() => MultiLanguageInputLong)
-	eventDescription: MultiLanguageInputLong;
+	@IsString()
+	@Length(10, 2000)
+	@Field(() => String)
+	eventDescription: string;
+
+	@IsNotEmpty()
+	@IsString()
+	@Length(10, 800)
+	@Field(() => String)
+	businessName: string;
 
 	@IsNotEmpty()
 	@Field(() => EventCategory)
@@ -433,62 +414,22 @@ export class EventCreate {
 	eventRequirements?: EventRequirementsInput;
 
 	@IsOptional()
-	@ValidateNested()
-	@Type(() => MultiLanguageNotesInput)
-	@Field(() => MultiLanguageNotesInput, { nullable: true })
-	eventNotes?: MultiLanguageNotesInput;
+	@IsString()
+	@MaxLength(1000)
+	@Field(() => String, { nullable: true })
+	eventNotes?: string;
 
 	@IsOptional()
 	@Length(10, 1000)
 	@Field(() => String, { nullable: true })
 	eventCancellationPolicy?: string;
 
+	// NEW: Optional originalLanguage (will be set automatically in service)
+	// @IsOptional()
+	// @IsEnum(['ko', 'en', 'uz', 'ru'])
+	// @Field(() => String, { nullable: true })
+	// originalLanguage?: string;
+
+	// This will be set automatically from context
 	businessId?: ObjectId;
 }
-
-// Nested Input Types
-// @InputType()
-// class MultiLanguageInput {
-// 	@IsNotEmpty()
-// 	@Length(1, 200)
-// 	@Field(() => String)
-// 	ko: string;
-
-// 	@IsNotEmpty()
-// 	@Length(1, 200)
-// 	@Field(() => String)
-// 	en: string;
-
-// 	@IsOptional()
-// 	@Length(1, 200)
-// 	@Field(() => String, { nullable: true })
-// 	uz?: string;
-
-// 	@IsOptional()
-// 	@Length(1, 200)
-// 	@Field(() => String, { nullable: true })
-// 	ru?: string;
-// }
-
-// @InputType()
-// class MultiLanguageDescriptionInput {
-// 	@IsNotEmpty()
-// 	@Length(10, 2000)
-// 	@Field(() => String)
-// 	ko: string;
-
-// 	@IsNotEmpty()
-// 	@Length(10, 2000)
-// 	@Field(() => String)
-// 	en: string;
-
-// 	@IsOptional()
-// 	@Length(10, 2000)
-// 	@Field(() => String, { nullable: true })
-// 	uz?: string;
-
-// 	@IsOptional()
-// 	@Length(10, 2000)
-// 	@Field(() => String, { nullable: true })
-// 	ru?: string;
-// }

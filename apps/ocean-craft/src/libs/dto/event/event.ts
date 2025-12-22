@@ -1,31 +1,15 @@
-import { Field, Int, Float, ObjectType } from '@nestjs/graphql';
+import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
-import { Member } from '../member/member';
 import {
-	EventAvailabilityStatus,
 	EventCategory,
 	EventCurrency,
 	EventDayOfWeek,
 	EventExperienceLevel,
 	EventScheduleType,
 	EventStatus,
+	EventAvailabilityStatus,
 } from '../../enums/event.enum';
-
-// Nested Types
-@ObjectType()
-class MultiLanguageField {
-	@Field(() => String)
-	ko: string;
-
-	@Field(() => String)
-	en: string;
-
-	@Field(() => String, { nullable: true })
-	uz?: string;
-
-	@Field(() => String, { nullable: true })
-	ru?: string;
-}
+import { Member } from '../member/member';
 
 @ObjectType()
 class EventLocation {
@@ -108,6 +92,7 @@ class EventRequirements {
 	experienceLevel?: EventExperienceLevel;
 }
 
+// MAIN EVENT TYPE
 @ObjectType()
 export class Event {
 	@Field(() => String)
@@ -119,11 +104,11 @@ export class Event {
 	@Field(() => Member, { nullable: true })
 	businessData?: Member;
 
-	@Field(() => MultiLanguageField)
-	eventTitle: MultiLanguageField;
+	@Field(() => String)
+	eventTitle: string;
 
-	@Field(() => MultiLanguageField)
-	eventDescription: MultiLanguageField;
+	@Field(() => String)
+	eventDescription: string;
 
 	@Field(() => EventCategory)
 	eventCategory: EventCategory;
@@ -167,8 +152,8 @@ export class Event {
 	@Field(() => EventRequirements, { nullable: true })
 	eventRequirements?: EventRequirements;
 
-	@Field(() => MultiLanguageField, { nullable: true })
-	eventNotes?: MultiLanguageField;
+	@Field(() => String, { nullable: true })
+	eventNotes?: string;
 
 	@Field(() => String, { nullable: true })
 	eventCancellationPolicy?: string;
@@ -202,4 +187,19 @@ export class Event {
 
 	@Field(() => Date)
 	updatedAt: Date;
+
+	// NEW: Add this for translation support (optional in response)
+	// @Field(() => String, { nullable: true })
+	// originalLanguage?: string;
+
+	//  NEW: These fields are populated by frontend translation
+	// // Not stored in DB, but can be in GraphQL response
+	// @Field(() => Boolean, { nullable: true })
+	// _isTranslated?: boolean;
+
+	// @Field(() => String, { nullable: true })
+	// _translatedFrom?: string;
+
+	// @Field(() => String, { nullable: true })
+	// _translatedTo?: string;
 }
