@@ -294,4 +294,20 @@ export class EventUpdate {
 	@IsString()
 	@MaxLength(1000)
 	eventCancellationPolicy?: string;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	rejectedAt?: Date;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	deletedAt?: Date;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	cancelledAt?: Date;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	completedAt?: Date;
 }

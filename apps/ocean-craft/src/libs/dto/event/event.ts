@@ -182,6 +182,12 @@ export class Event {
 	@Field(() => Date, { nullable: true })
 	deletedAt?: Date;
 
+	@Field(() => Date, { nullable: true })
+	cancelledAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	completedAt?: Date;
+
 	@Field(() => Date)
 	createdAt: Date;
 
