@@ -1,20 +1,25 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { BusinessEventsInquiry, EventCreate, Events } from '../../libs/dto/event/event.input';
+import { BusinessEventsInquiry, EventCreate, Events, EventsInquiry } from '../../libs/dto/event/event.input';
 import { Member } from '../../libs/dto/member/member';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { EventStatus } from '../../libs/enums/event.enum';
 import { Event } from '../../libs/dto/event/event';
 import { EventUpdate } from '../../libs/dto/event/event.update';
-import { T } from '../../libs/types/common';
+import { StatisticModifier, T } from '../../libs/types/common';
 import { lookupMember, lookupMember1 } from '../../libs/config';
+import { ViewGroup } from '../../libs/enums/view.enum';
+import { ViewService } from '../view/view.service';
+import { MemberService } from '../member/member.service';
 
 @Injectable()
 export class EventService {
 	constructor(
 		@InjectModel('Event') private readonly eventModel: Model<Event>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
+		private viewService: ViewService,
+		private memberService: MemberService,
 	) {}
 
 	//seller services
@@ -110,12 +115,10 @@ export class EventService {
 				deletedAt: null,
 			};
 
-			// Search filters
 			if (search.categoryList && search.categoryList.length > 0) {
 				match.eventCategory = { $in: search.categoryList };
 			}
 
-			// Sorting
 			const sortCriteria: T = { [sort ?? 'createdAt']: direction ?? Direction.DESC };
 
 			const result = await this.eventModel
@@ -142,6 +145,103 @@ export class EventService {
 			return result[0];
 		} catch (err) {
 			console.log('Error, Service.getBusinessEvents:', err.message);
+			throw new BadRequestException(err.message);
+		}
+	}
+
+	//users
+	public async getEvent(memberId: ObjectId, eventId: ObjectId): Promise<Event> {
+		const search: any = {
+			_id: eventId,
+			eventStatus: EventStatus.ACTIVE,
+			deletedAt: null,
+		};
+
+		const targetEvent: Event = await this.eventModel.findOne(search).lean().exec();
+		if (!targetEvent) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		if (memberId) {
+			const viewInput = {
+				memberId: memberId,
+				viewRefId: eventId,
+				viewGroup: ViewGroup.EVENT,
+			};
+			const newView = await this.viewService.recordView(viewInput);
+
+			if (newView) {
+				await this.eventStatsEditor({
+					_id: eventId,
+					targetKey: 'eventViews',
+					modifier: 1,
+				});
+				targetEvent.eventViews++;
+			}
+		}
+
+		// Populate business data
+		targetEvent.businessData = await this.memberService.getMember(null, targetEvent.businessId);
+
+		return targetEvent;
+	}
+
+	public async eventStatsEditor(input: StatisticModifier): Promise<Event> {
+		const { _id, targetKey, modifier } = input;
+		return await this.eventModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true }).exec();
+	}
+
+	public async getEvents(memberId: ObjectId, input: EventsInquiry): Promise<Events> {
+		try {
+			const { page, limit, sort, direction, search } = input;
+			const match: any = {
+				eventStatus: EventStatus.ACTIVE,
+			};
+
+			// Search filters
+			if (search.businessId) match.businessId = search.businessId;
+			if (search.categoryList && search.categoryList.length > 0) {
+				match.eventCategory = { $in: search.categoryList };
+			}
+			if (search.availabilityList && search.availabilityList.length > 0) {
+				match.eventAvailabilityStatus = { $in: search.availabilityList };
+			}
+			if (search.city) match['eventLocation.city'] = { $regex: search.city, $options: 'i' };
+			if (search.pricesRange) {
+				match.eventPrice = {
+					$gte: search.pricesRange.start,
+					$lte: search.pricesRange.end,
+				};
+			}
+			if (search.text) {
+				match.$text = { $search: search.text };
+			}
+
+			// Sorting
+			const sortCriteria: any = { [sort ?? 'createdAt']: direction ?? Direction.DESC };
+
+			const result = await this.eventModel
+				.aggregate([
+					{ $match: match },
+					{ $sort: sortCriteria },
+					{
+						$facet: {
+							list: [
+								{ $skip: (page - 1) * limit },
+								{ $limit: limit },
+								// Lookup business data
+								lookupMember,
+								{ $unwind: { path: '$memberData', preserveNullAndEmptyArrays: true } },
+							],
+							metaCounter: [{ $count: 'total' }],
+						},
+					},
+				])
+				.exec();
+
+			if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+			return result[0];
+		} catch (err) {
+			console.log('Error, Service.getEvents:', err.message);
 			throw new BadRequestException(err.message);
 		}
 	}

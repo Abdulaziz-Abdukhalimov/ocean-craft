@@ -188,6 +188,10 @@ export class Event {
 	@Field(() => Date)
 	updatedAt: Date;
 
+	//from aggregation
+	@Field(() => Member, { nullable: true })
+	memberData?: Member;
+
 	// NEW: Add this for translation support (optional in response)
 	// @Field(() => String, { nullable: true })
 	// originalLanguage?: string;

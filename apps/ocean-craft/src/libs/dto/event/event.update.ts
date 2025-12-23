@@ -24,6 +24,7 @@ import {
 	EventDayOfWeek,
 	EventExperienceLevel,
 	EventScheduleType,
+	EventStatus,
 } from '../../enums/event.enum';
 import { ObjectId } from 'mongoose';
 
@@ -258,6 +259,11 @@ export class EventUpdate {
 	@Field(() => EventAvailabilityStatus, { nullable: true })
 	@IsEnum(EventAvailabilityStatus)
 	eventAvailabilityStatus?: EventAvailabilityStatus;
+
+	@IsOptional()
+	@Field(() => EventStatus, { nullable: true })
+	@IsEnum(EventStatus)
+	eventStatus?: EventStatus;
 
 	@IsOptional()
 	@Field(() => Int, { nullable: true })

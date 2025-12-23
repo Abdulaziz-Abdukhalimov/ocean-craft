@@ -30,6 +30,7 @@ import {
 import { Direction } from '../../enums/common.enum';
 import { availableEventSorts } from '../../config';
 import { Event } from './event';
+import { PriceRange } from '../product/product.input';
 
 @InputType()
 class EventLocationInput {
@@ -156,14 +157,14 @@ class EventRequirementsInput {
 	experienceLevel?: EventExperienceLevel;
 }
 
-@InputType()
-export class PriceRange {
-	@Field(() => Int)
-	start: number;
+// @InputType()
+// export class PriceRange {
+// 	@Field(() => Int)
+// 	start: number;
 
-	@Field(() => Int)
-	end: number;
-}
+// 	@Field(() => Int)
+// 	end: number;
+// }
 
 @InputType()
 class EISearch {
@@ -321,7 +322,7 @@ export class Events {
 	list: Event[];
 
 	@Field(() => [MetaData], { nullable: true })
-	metaData: MetaData[];
+	metaCounter?: MetaData[];
 }
 
 //  MAIN EVENT CREATE INPUT

@@ -5,12 +5,13 @@ import { MemberType } from '../../libs/enums/member.enum';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { BusinessEventsInquiry, EventCreate, Events } from '../../libs/dto/event/event.input';
+import { BusinessEventsInquiry, EventCreate, Events, EventsInquiry } from '../../libs/dto/event/event.input';
 import { AuthMember } from '../auth/decoraters/authMember.decorater';
 import { ObjectId } from 'mongoose';
 import { Event } from '../../libs/dto/event/event';
 import { EventUpdate } from '../../libs/dto/event/event.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class EventResolver {
@@ -55,4 +56,18 @@ export class EventResolver {
 	}
 
 	//User
+	@UseGuards(WithoutGuard)
+	@Query(() => Event)
+	public async getEvent(@Args('eventId') eventId: string, @AuthMember('_id') memberId: ObjectId): Promise<Event> {
+		console.log('Resolver: getEvent');
+		const eventIdObj = shapeIntoMongoObjectId(eventId);
+		return await this.eventService.getEvent(memberId, eventIdObj);
+	}
+
+	@UseGuards(WithoutGuard)
+	@Query(() => Events)
+	public async getEvents(@Args('input') input: EventsInquiry, @AuthMember('_id') memberId: ObjectId): Promise<Events> {
+		console.log('Resolver: getEvents');
+		return await this.eventService.getEvents(memberId, input);
+	}
 }
