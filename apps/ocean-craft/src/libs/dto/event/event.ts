@@ -101,9 +101,6 @@ export class Event {
 	@Field(() => String)
 	businessId: ObjectId;
 
-	@Field(() => Member, { nullable: true })
-	businessData?: Member;
-
 	@Field(() => String)
 	eventTitle: string;
 
@@ -196,7 +193,7 @@ export class Event {
 
 	//from aggregation
 	@Field(() => Member, { nullable: true })
-	memberData?: Member;
+	businessData?: Member;
 
 	// NEW: Add this for translation support (optional in response)
 	// @Field(() => String, { nullable: true })

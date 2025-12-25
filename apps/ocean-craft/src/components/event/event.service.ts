@@ -42,7 +42,7 @@ export class EventService {
 				...input,
 				eventStatus: EventStatus.ACTIVE,
 			});
-			//increase memberProperties
+			//increase memberEvents
 			await this.memberService.memberStatsEditor({ _id: newEvent.businessId, targetKey: 'memberEvents', modifier: 1 });
 
 			return newEvent;
@@ -144,7 +144,7 @@ export class EventService {
 								lookupMember1,
 								{ $unwind: '$businessData' },
 							],
-							metaData: [{ $count: 'total' }],
+							metaCounter: [{ $count: 'total' }],
 						},
 					},
 				])
