@@ -170,7 +170,7 @@ class EventRequirementsInput {
 class EISearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
-	businessId?: ObjectId;
+	memberId?: ObjectId;
 
 	@IsOptional()
 	@Field(() => [EventCategory], { nullable: true })
@@ -268,7 +268,7 @@ class AEISearch {
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })
-	businessId?: ObjectId;
+	memberId?: ObjectId;
 }
 
 @InputType()
@@ -432,5 +432,5 @@ export class EventCreate {
 	// originalLanguage?: string;
 
 	// This will be set automatically from context
-	businessId?: ObjectId;
+	memberId?: ObjectId;
 }

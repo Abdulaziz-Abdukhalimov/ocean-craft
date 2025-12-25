@@ -16,7 +16,7 @@ export class Product {
 	_id: ObjectId;
 
 	@Field(() => String)
-	sellerId: ObjectId;
+	memberId: ObjectId;
 
 	@Field(() => ProductCategory)
 	productCategory: ProductCategory;

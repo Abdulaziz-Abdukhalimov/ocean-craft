@@ -32,7 +32,7 @@ export class EventService {
 	//seller services
 	public async createEvent(memberId: ObjectId, input: EventCreate): Promise<Event> {
 		try {
-			input.businessId = memberId;
+			input.memberId = memberId;
 
 			// Get business name from member
 			const member: Member = await this.memberModel.findById(memberId);
@@ -43,7 +43,7 @@ export class EventService {
 				eventStatus: EventStatus.ACTIVE,
 			});
 			//increase memberEvents
-			await this.memberService.memberStatsEditor({ _id: newEvent.businessId, targetKey: 'memberEvents', modifier: 1 });
+			await this.memberService.memberStatsEditor({ _id: newEvent.memberId, targetKey: 'memberEvents', modifier: 1 });
 
 			return newEvent;
 		} catch (err) {
@@ -59,7 +59,7 @@ export class EventService {
 			// Check ownership
 			const event = await this.eventModel.findOne({
 				_id,
-				businessId: memberId,
+				memberId: memberId,
 				deletedAt: null,
 			});
 
@@ -90,7 +90,7 @@ export class EventService {
 				.findOneAndUpdate(
 					{
 						_id: eventId,
-						businessId: memberId,
+						memberId: memberId,
 						deletedAt: null,
 					},
 					{
@@ -120,7 +120,7 @@ export class EventService {
 			}
 
 			const match: any = {
-				businessId: memberId,
+				memberId: memberId,
 				eventStatus: search.eventStatus ?? { $ne: EventStatus.DELETED },
 				deletedAt: null,
 			};
@@ -189,7 +189,7 @@ export class EventService {
 		}
 
 		// Populate business data
-		targetEvent.businessData = await this.memberService.getMember(null, targetEvent.businessId);
+		targetEvent.businessData = await this.memberService.getMember(null, targetEvent.memberId);
 
 		return targetEvent;
 	}
@@ -207,7 +207,7 @@ export class EventService {
 			};
 
 			// Search filters
-			if (search.businessId) match.businessId = search.businessId;
+			if (search.memberId) match.businessId = search.memberId;
 			if (search.categoryList && search.categoryList.length > 0) {
 				match.eventCategory = { $in: search.categoryList };
 			}
@@ -270,7 +270,7 @@ export class EventService {
 				deletedAt: null,
 			};
 
-			if (search.businessId) match.businessId = search.businessId;
+			if (search.memberId) match.memberId = search.memberId;
 			if (search.categoryList && search.categoryList.length > 0) {
 				match.eventCategory = { $in: search.categoryList };
 			}
@@ -338,7 +338,7 @@ export class EventService {
 
 		if (eventStatus === EventStatus.DELETED) {
 			await this.memberService.memberStatsEditor({
-				_id: result.businessId,
+				_id: result.memberId,
 				targetKey: 'memberEvents',
 				modifier: -1,
 			});

@@ -99,7 +99,7 @@ export class Event {
 	_id: ObjectId;
 
 	@Field(() => String)
-	businessId: ObjectId;
+	memberId: ObjectId;
 
 	@Field(() => String)
 	eventTitle: string;

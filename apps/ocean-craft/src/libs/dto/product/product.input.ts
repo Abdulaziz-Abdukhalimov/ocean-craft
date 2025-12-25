@@ -85,7 +85,7 @@ export class ProductInput {
 	@Field(() => Boolean, { nullable: true })
 	productRent?: boolean;
 
-	sellerId?: ObjectId;
+	memberId?: ObjectId;
 
 	@IsOptional()
 	@Field(() => Date, { nullable: true })
@@ -114,7 +114,7 @@ export class PeriodsRange {
 class PISearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
-	sellerId?: ObjectId;
+	memberId?: ObjectId;
 
 	@IsOptional()
 	@Field(() => [ProductCategory], { nullable: true })
@@ -220,7 +220,7 @@ class APISearch {
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })
-	sellerId?: ObjectId;
+	memberId?: ObjectId;
 }
 
 @InputType()

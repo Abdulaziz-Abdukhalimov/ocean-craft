@@ -53,7 +53,7 @@ export const lookupAuthMemberLiked = (memberId: T, targetRefId: string = '$_id')
 export const lookupMember = {
 	$lookup: {
 		from: 'members',
-		localField: 'sellerId',
+		localField: 'memberId',
 		foreignField: '_id',
 		as: 'memberData',
 	},
@@ -62,7 +62,7 @@ export const lookupMember = {
 export const lookupMember1 = {
 	$lookup: {
 		from: 'members',
-		localField: 'businessId',
+		localField: 'memberId',
 		foreignField: '_id',
 		as: 'businessData',
 	},

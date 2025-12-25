@@ -30,7 +30,7 @@ export class ProductService {
 		try {
 			const result = await this.productModel.create(input);
 			//increase memberProperties
-			await this.memberService.memberStatsEditor({ _id: result.sellerId, targetKey: 'memberProducts', modifier: 1 });
+			await this.memberService.memberStatsEditor({ _id: result.memberId, targetKey: 'memberProducts', modifier: 1 });
 			return result;
 		} catch (err) {
 			console.log('Error , createProduct:', err.message);
@@ -58,7 +58,7 @@ export class ProductService {
 			// const likeInput = { memberId: memberId, likeRefId: propertyId, likeGroup: LikeGroup.PROPERTY };
 			// targetProperty.meLiked = await this.likeService.checkLikeExistance(likeInput);
 		}
-		targetProduct.memberData = await this.memberService.getMember(null, targetProduct.sellerId);
+		targetProduct.memberData = await this.memberService.getMember(null, targetProduct.memberId);
 		return targetProduct;
 	}
 
@@ -71,7 +71,7 @@ export class ProductService {
 		let { productStatus, soldAt, deletedAt } = input;
 		const search: T = {
 			_id: input._id,
-			sellerId: memberId,
+			memberId: memberId,
 			productStatus: ProductStatus.ACTIVE,
 		};
 
@@ -123,10 +123,18 @@ export class ProductService {
 	}
 
 	private shapeMatchQuery(match: T, input: ProductsInquiry): void {
-		const { sellerId, categoryList, conditionList, currencyList, location, productRent, pricesRange, text } =
-			input.search;
+		const {
+			memberId: memberId,
+			categoryList,
+			conditionList,
+			currencyList,
+			location,
+			productRent,
+			pricesRange,
+			text,
+		} = input.search;
 
-		if (sellerId) match.memberId = shapeIntoMongoObjectId(sellerId);
+		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
 		if (categoryList && categoryList.length) match.productCategory = { $in: categoryList };
 		if (conditionList && conditionList.length) match.productCondition = { $in: conditionList };
 		if (currencyList && currencyList.length) match.productCurrency = { $in: currencyList };
@@ -143,7 +151,7 @@ export class ProductService {
 		if (productStatus === ProductStatus.DELETE) throw new BadRequestException(Message.NOT_ALLOWED_REQUEST);
 
 		const match: T = {
-			sellerId: memberId,
+			memberId: memberId,
 			productStatus: productStatus ?? { $ne: ProductStatus.DELETE },
 		};
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
@@ -215,7 +223,7 @@ export class ProductService {
 
 		if (soldAt || deletedAt) {
 			await this.memberService.memberStatsEditor({
-				_id: result.sellerId,
+				_id: result.memberId,
 				targetKey: 'memberProducts',
 				modifier: -1,
 			});

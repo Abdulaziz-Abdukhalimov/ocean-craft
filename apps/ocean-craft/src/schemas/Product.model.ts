@@ -11,7 +11,7 @@ import {
 
 const ProductSchema = new Schema(
 	{
-		sellerId: {
+		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',

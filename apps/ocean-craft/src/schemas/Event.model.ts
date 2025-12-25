@@ -11,7 +11,7 @@ import {
 
 const EventSchema = new Schema(
 	{
-		businessId: {
+		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
