@@ -19,14 +19,18 @@ import { ViewGroup } from '../../libs/enums/view.enum';
 import { ViewService } from '../view/view.service';
 import { MemberService } from '../member/member.service';
 import * as moment from 'moment';
+import { LikeService } from '../like/like.service';
+import { LikeInput } from '../../libs/dto/like/like.input';
+import { LikeGroup } from '../../libs/enums/like.enum';
 
 @Injectable()
 export class EventService {
 	constructor(
 		@InjectModel('Event') private readonly eventModel: Model<Event>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
-		private viewService: ViewService,
-		private memberService: MemberService,
+		private readonly viewService: ViewService,
+		private readonly memberService: MemberService,
+		private readonly likeService: LikeService,
 	) {}
 
 	//seller services
@@ -254,6 +258,28 @@ export class EventService {
 			console.log('Error, Service.getEvents:', err.message);
 			throw new BadRequestException(err.message);
 		}
+	}
+
+	public async likeTargetEvent(memberId: ObjectId, likeRefId: ObjectId): Promise<Event> {
+		const target: Event = await this.eventModel.findOne({ _id: likeRefId, eventStatus: EventStatus.ACTIVE }).exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.EVENT,
+		};
+
+		//LIKE TOGGLE
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.eventStatsEditor({
+			_id: likeRefId,
+			targetKey: 'eventLikes',
+			modifier: modifier,
+		});
+
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
 	}
 
 	//ADMIN

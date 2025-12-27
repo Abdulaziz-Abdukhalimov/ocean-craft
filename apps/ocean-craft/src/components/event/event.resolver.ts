@@ -78,6 +78,14 @@ export class EventResolver {
 		return await this.eventService.getEvents(memberId, input);
 	}
 
+	@UseGuards(AuthGuard)
+	@Mutation(() => Event)
+	public async likeTargetEvent(@Args('eventId') input: string, @AuthMember('_id') memberId: ObjectId): Promise<Event> {
+		console.log('Mutation: likeTargetEvent');
+		const likeRefId = shapeIntoMongoObjectId(input);
+		return await this.eventService.likeTargetEvent(memberId, likeRefId);
+	}
+
 	//Admin
 	@Roles(MemberType.ADMIN)
 	@UseGuards(AuthGuard, RolesGuard)
