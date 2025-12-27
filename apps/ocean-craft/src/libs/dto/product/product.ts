@@ -9,6 +9,7 @@ import {
 	ProductStatus,
 } from '../../enums/product.enum';
 import { Member, TotalCounter } from '../member/member';
+import { MeLiked } from '../like/like';
 
 @ObjectType()
 export class Product {
@@ -97,9 +98,11 @@ export class Product {
 	updatedAt: Date;
 
 	// from aggregation
-
 	@Field(() => Member, { nullable: true })
 	memberData?: Member;
+
+	@Field(() => [MeLiked], { nullable: true })
+	meLiked?: MeLiked[];
 }
 
 @ObjectType()

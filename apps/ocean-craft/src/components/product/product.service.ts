@@ -17,6 +17,9 @@ import { ViewService } from '../view/view.service';
 import { ProductUpdate } from '../../libs/dto/product/product.update';
 import * as moment from 'moment';
 import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
+import { LikeInput } from '../../libs/dto/like/like.input';
+import { LikeGroup } from '../../libs/enums/like.enum';
+import { LikeService } from '../like/like.service';
 
 @Injectable()
 export class ProductService {
@@ -24,6 +27,7 @@ export class ProductService {
 		@InjectModel('Product') private readonly productModel: Model<Product>,
 		private memberService: MemberService,
 		private viewService: ViewService,
+		private likeService: LikeService,
 	) {}
 
 	public async createProduct(input: ProductInput): Promise<Product> {
@@ -55,8 +59,8 @@ export class ProductService {
 				targetProduct.productViews++;
 			}
 			//meLiked
-			// const likeInput = { memberId: memberId, likeRefId: propertyId, likeGroup: LikeGroup.PROPERTY };
-			// targetProperty.meLiked = await this.likeService.checkLikeExistance(likeInput);
+			const likeInput = { memberId: memberId, likeRefId: productId, likeGroup: LikeGroup.PRODUCT };
+			targetProduct.meLiked = await this.likeService.checkLikeExistance(likeInput);
 		}
 		targetProduct.memberData = await this.memberService.getMember(null, targetProduct.memberId);
 		return targetProduct;
@@ -175,6 +179,26 @@ export class ProductService {
 			.exec();
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		return result[0];
+	}
+
+	public async likeTargetProduct(memberId: ObjectId, likeRefId: ObjectId): Promise<Product> {
+		const target: Product = await this.productModel
+			.findOne({ _id: likeRefId, productStatus: ProductStatus.ACTIVE })
+			.exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.PRODUCT,
+		};
+
+		//LIKE TOGGLE
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.productStatsEditor({ _id: likeRefId, targetKey: 'productLikes', modifier: modifier });
+
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
 	}
 
 	/* ADMIN */
