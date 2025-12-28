@@ -90,10 +90,6 @@ const MemberSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
-		memberComments: {
-			type: Number,
-			default: 0,
-		},
 		memberBlocks: {
 			type: Number,
 			default: 0,
