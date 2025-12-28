@@ -190,6 +190,9 @@ export class EventService {
 				});
 				targetEvent.eventViews++;
 			}
+
+			const likeInput = { memberId: memberId, likeRefId: eventId, likeGroup: LikeGroup.EVENT };
+			targetEvent.meLiked = await this.likeService.checkLikeExistance(likeInput);
 		}
 
 		// Populate business data

@@ -10,6 +10,7 @@ import {
 	EventAvailabilityStatus,
 } from '../../enums/event.enum';
 import { Member } from '../member/member';
+import { MeLiked } from '../like/like';
 
 @ObjectType()
 class EventLocation {
@@ -194,6 +195,9 @@ export class Event {
 	//from aggregation
 	@Field(() => Member, { nullable: true })
 	businessData?: Member;
+
+	@Field(() => [MeLiked], { nullable: true })
+	meLiked?: MeLiked[];
 
 	// NEW: Add this for translation support (optional in response)
 	// @Field(() => String, { nullable: true })
