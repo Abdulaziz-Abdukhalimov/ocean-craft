@@ -137,8 +137,8 @@ class PISearch {
 	location?: string;
 
 	@IsOptional()
-	@Field(() => Boolean, { nullable: true })
-	productRent?: boolean;
+	@Field(() => ProductPriceType, { nullable: true })
+	productPriceType?: ProductPriceType;
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })
@@ -180,6 +180,10 @@ class SPISearch {
 	@IsOptional()
 	@Field(() => [ProductCategory], { nullable: true })
 	categoryList?: ProductCategory[];
+
+	@IsOptional()
+	@Field(() => ProductPriceType, { nullable: true })
+	productPriceType?: ProductPriceType;
 }
 
 @InputType()
@@ -217,6 +221,10 @@ class APISearch {
 	@IsOptional()
 	@Field(() => [ProductCategory], { nullable: true })
 	categoryList?: ProductCategory[];
+
+	@IsOptional()
+	@Field(() => ProductPriceType, { nullable: true })
+	productPriceType?: ProductPriceType;
 
 	@IsOptional()
 	@Field(() => String, { nullable: true })

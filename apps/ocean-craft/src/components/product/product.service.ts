@@ -133,8 +133,8 @@ export class ProductService {
 			conditionList,
 			currencyList,
 			location,
-			productRent,
 			pricesRange,
+			productPriceType,
 			text,
 		} = input.search;
 
@@ -147,7 +147,7 @@ export class ProductService {
 
 		if (text) match.productTitle = { $regex: new RegExp(text, 'i') };
 		if (location) match.productAddress = { $regex: new RegExp(location, 'i') };
-		if (productRent !== undefined) match.productRent = productRent;
+		if (productPriceType) match.productPriceType = productPriceType;
 	}
 
 	public async getSellerProducts(memberId: ObjectId, input: SellerProductsInquiry): Promise<Products> {
