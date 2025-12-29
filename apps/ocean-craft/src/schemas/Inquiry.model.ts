@@ -1,48 +1,78 @@
 import { Schema } from 'mongoose';
-import { InquiryItemType } from '../libs/enums/product.enum';
+import { InquiryStatus, PreferredContactMethod } from '../libs/enums/productInquiry.enum';
 
 const InquirySchema = new Schema(
 	{
-		// Buyer Information
 		buyerId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
 		},
-		// Seller/Business Information
+
+		// Seller
 		sellerId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
 		},
-		// Item Type (Product or Event)
-		itemType: {
-			type: String,
-			enum: InquiryItemType,
-			required: true,
-		},
-		//  Item ID (references Product OR Event dynamically)
-		itemId: {
+
+		productId: {
 			type: Schema.Types.ObjectId,
 			required: true,
-			refPath: 'itemType', // Dynamic reference!
+			ref: 'Product',
 		},
-		// Inquiry Message
+
+		contactPerson: {
+			fullName: {
+				type: String,
+				required: true,
+			},
+			email: {
+				type: String,
+				required: true,
+			},
+			phone: {
+				type: String,
+				required: true,
+			},
+		},
+
 		inquiryMessage: {
 			type: String,
 			required: true,
 			maxlength: 2000,
 		},
+		preferredContactMethod: {
+			type: String,
+			enum: PreferredContactMethod,
+			default: PreferredContactMethod.ANY,
+		},
+
 		sellerReply: {
 			type: String,
 			maxlength: 2000,
 		},
-		// Read Status
+
+		status: {
+			type: String,
+			enum: InquiryStatus,
+			default: InquiryStatus.PENDING,
+		},
+
 		isRead: {
 			type: Boolean,
 			default: false,
 		},
-		repliedAt: {
+
+		viewedAt: {
+			type: Date,
+		},
+
+		respondedAt: {
+			type: Date,
+		},
+
+		closedAt: {
 			type: Date,
 		},
 	},
@@ -52,13 +82,9 @@ const InquirySchema = new Schema(
 	},
 );
 
-// Seller's unread inquiries
+InquirySchema.index({ sellerId: 1, status: 1, createdAt: -1 });
 InquirySchema.index({ sellerId: 1, isRead: 1, createdAt: -1 });
-
-// Buyer's inquiries
 InquirySchema.index({ buyerId: 1, createdAt: -1 });
-
-// Item inquiries (works for both products and events)
-InquirySchema.index({ itemType: 1, itemId: 1, createdAt: -1 });
+InquirySchema.index({ productId: 1, createdAt: -1 });
 
 export default InquirySchema;
