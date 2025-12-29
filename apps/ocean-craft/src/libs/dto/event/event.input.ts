@@ -434,3 +434,16 @@ export class EventCreate {
 	// This will be set automatically from context
 	memberId?: ObjectId;
 }
+
+@ObjectType()
+export class AvailableDate {
+	@Field(() => String)
+	date: string;
+	@Field(() => Number)
+	remainingCapacity: number;
+	@Field(() => Boolean)
+	isAvailable: boolean;
+
+	@Field(() => Boolean, { nullable: true })
+	isPastDate: boolean;
+}

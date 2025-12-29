@@ -7,8 +7,19 @@ import { EventModule } from './event/event.module';
 import { FollowModule } from './follow/follow.module';
 import { LikeModule } from './like/like.module';
 import { ViewModule } from './view/view.module';
+import { ReservationModule } from './reservation/reservation.module';
 
 @Module({
-  imports: [MemberModule, AuthModule, ProductModule, CommentModule, EventModule, FollowModule, LikeModule, ViewModule]
+	imports: [
+		MemberModule,
+		AuthModule,
+		ProductModule,
+		CommentModule,
+		EventModule,
+		FollowModule,
+		LikeModule,
+		ViewModule,
+		ReservationModule,
+	],
 })
 export class ComponentsModule {}

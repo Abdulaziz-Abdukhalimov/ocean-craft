@@ -35,6 +35,7 @@ export enum EventStatus {
 	ACTIVE = 'ACTIVE',
 	CANCELLED = 'CANCELLED',
 	COMPLETED = 'COMPLETED',
+	CONFIRMED = 'CONFIRMED',
 	DELETED = 'DELETED',
 }
 registerEnumType(EventStatus, {
@@ -70,4 +71,20 @@ export enum EventExperienceLevel {
 }
 registerEnumType(EventExperienceLevel, {
 	name: 'EventExperienceLevel',
+});
+
+export enum PaymentMethod {
+	CASH = 'CASH',
+	CARD = 'CARD',
+}
+registerEnumType(PaymentMethod, {
+	name: 'PaymentMethod',
+});
+
+export enum PaymentStatus {
+	PENDING = 'PENDING',
+	PAID = 'PAID',
+}
+registerEnumType(PaymentStatus, {
+	name: 'PaymentStatus',
 });

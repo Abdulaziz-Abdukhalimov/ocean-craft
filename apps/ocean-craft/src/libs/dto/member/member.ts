@@ -69,7 +69,7 @@ export class Member {
 	@Field(() => Int)
 	memberWarnings: number;
 
-	@Field(() => Int)
+	@Field(() => Int, { nullable: true })
 	memberComments: number;
 
 	@Field(() => Int)
