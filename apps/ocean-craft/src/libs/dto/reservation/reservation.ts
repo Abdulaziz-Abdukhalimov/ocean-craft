@@ -2,7 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { EventStatus, PaymentMethod, PaymentStatus } from '../../enums/event.enum';
 
 @ObjectType()
-class ContactPerson {
+export class ContactPerson {
 	@Field(() => String)
 	fullName: string;
 

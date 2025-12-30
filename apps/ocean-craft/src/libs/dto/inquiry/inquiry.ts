@@ -1,18 +1,20 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
 import { InquiryStatus, PreferredContactMethod } from '../../enums/productInquiry.enum';
+import { ContactPerson } from '../reservation/reservation';
+import { TotalCounter } from '../member/member';
 
-@ObjectType()
-export class ContactPerson {
-	@Field(() => String)
-	fullName: string;
+// @ObjectType()
+// export class ContactPerson {
+// 	@Field(() => String)
+// 	fullName: string;
 
-	@Field(() => String)
-	email: string;
+// 	@Field(() => String)
+// 	email: string;
 
-	@Field(() => String)
-	phone: string;
-}
+// 	@Field(() => String)
+// 	phone: string;
+// }
 
 @ObjectType()
 export class Inquiry {
@@ -62,11 +64,11 @@ export class Inquiry {
 	updatedAt: Date;
 }
 
-@ObjectType()
-export class TotalCounter {
-	@Field(() => Int)
-	total: number;
-}
+// @ObjectType()
+// export class TotalCounter {
+// 	@Field(() => Int)
+// 	total: number;
+// }
 
 @ObjectType()
 export class InquiriesResponse {

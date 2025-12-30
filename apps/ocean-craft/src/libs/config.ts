@@ -77,6 +77,15 @@ export const lookupMember1 = {
 	},
 };
 
+export const lookupProduct = {
+	$lookup: {
+		from: 'products',
+		localField: 'productId',
+		foreignField: '_id',
+		as: 'productData',
+	},
+};
+
 export const availableProductSorts = [
 	'createdAt',
 	'updatedAt',
