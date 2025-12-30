@@ -14,6 +14,15 @@ export class ContactPerson {
 }
 
 @ObjectType()
+export class PaymentInfoResponse {
+	@Field(() => String)
+	cardholderName: string;
+
+	@Field(() => String)
+	cardLastFour: string;
+}
+
+@ObjectType()
 export class Reservation {
 	@Field(() => String)
 	_id: string;
@@ -45,11 +54,20 @@ export class Reservation {
 	@Field(() => PaymentMethod)
 	paymentMethod: PaymentMethod;
 
+	@Field(() => PaymentInfoResponse, { nullable: true })
+	paymentInfo?: PaymentInfoResponse;
+
 	@Field(() => PaymentStatus)
 	paymentStatus: PaymentStatus;
 
+	@Field(() => Date, { nullable: true })
+	paymentProcessedAt?: Date;
+
 	@Field(() => EventStatus)
 	status: EventStatus;
+
+	@Field(() => String)
+	bookingReference: string;
 
 	@Field(() => Date)
 	createdAt: Date;

@@ -4,7 +4,7 @@ import { Model, ObjectId } from 'mongoose';
 import { Event } from '../../libs/dto/event/event';
 import { Reservation } from '../../libs/dto/reservation/reservation';
 import { CreateReservationInput } from '../../libs/dto/reservation/reservation.input';
-import { EventStatus, PaymentStatus } from '../../libs/enums/event.enum';
+import { EventStatus, PaymentMethod, PaymentStatus } from '../../libs/enums/event.enum';
 
 @Injectable()
 export class ReservationService {
@@ -15,7 +15,7 @@ export class ReservationService {
 	) {}
 
 	public async bookEvent(memberId: ObjectId, input: CreateReservationInput): Promise<Reservation> {
-		const { eventId, date, numberOfPeople, paymentMethod, fullName, email, phone } = input;
+		const { eventId, date, numberOfPeople, paymentMethod, fullName, email, phone, paymentInfo } = input;
 
 		const event = await this.eventModel.findById(eventId);
 		if (!event) {
@@ -81,6 +81,32 @@ export class ReservationService {
 		const pricePerPerson = event.eventPrice;
 		const totalAmount = pricePerPerson * numberOfPeople;
 
+		let paymentStatus: PaymentStatus;
+		let paymentProcessedAt: Date | undefined;
+		let savedPaymentInfo: any = undefined;
+
+		if (paymentMethod === PaymentMethod.CARD) {
+			if (!paymentInfo) {
+				await this.slotModel.findByIdAndUpdate(slot._id, {
+					$inc: {
+						bookedCapacity: -numberOfPeople,
+						remainingCapacity: -numberOfPeople,
+					},
+				});
+				throw new Error('Payment information is required for card payments');
+			}
+
+			paymentStatus = PaymentStatus.PAID;
+			paymentProcessedAt = new Date();
+
+			savedPaymentInfo = {
+				cardholderName: paymentInfo.cardholderName,
+				cardLastFour: paymentInfo.cardNumber.slice(-4),
+			};
+		} else {
+			paymentStatus = PaymentStatus.PENDING;
+		}
+
 		const bookingReference = await this.generateBookingReference();
 
 		try {
@@ -98,8 +124,11 @@ export class ReservationService {
 				pricePerPerson,
 				totalAmount,
 				paymentMethod,
-				paymentStatus: PaymentStatus.PENDING,
+				paymentInfo: savedPaymentInfo,
+				paymentStatus,
+				paymentProcessedAt,
 				status: EventStatus.CONFIRMED,
+				bookingReference,
 			});
 
 			return reservation;
@@ -154,5 +183,30 @@ export class ReservationService {
 		}
 
 		return availableDates;
+	}
+
+	public async getMyReservations(memberId: ObjectId): Promise<Reservation[]> {
+		const reservations = await this.reservationModel
+			.find({
+				memberId: memberId,
+				status: { $ne: EventStatus.DELETED },
+			})
+			.sort({ createdAt: -1 })
+			.lean();
+
+		return reservations;
+	}
+
+	public async getReservation(reservationId: string, memberId: ObjectId): Promise<Reservation> {
+		const reservation = await this.reservationModel.findOne({
+			_id: reservationId,
+			memberId: memberId,
+		});
+
+		if (!reservation) {
+			throw new Error('Reservation not found or access denied');
+		}
+
+		return reservation;
 	}
 }

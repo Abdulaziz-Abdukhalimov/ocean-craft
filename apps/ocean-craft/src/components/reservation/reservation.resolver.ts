@@ -27,4 +27,16 @@ export class ReservationResolver {
 	public async getAvailableDates(@Args('eventId') eventId: string): Promise<AvailableDate[]> {
 		return this.reservationService.getAvailableDates(eventId);
 	}
+
+	@UseGuards(AuthGuard)
+	@Query(() => [Reservation])
+	async getMyReservations(@AuthMember('_id') memberId: ObjectId) {
+		return this.reservationService.getMyReservations(memberId);
+	}
+
+	@UseGuards(AuthGuard)
+	@Query(() => Reservation)
+	async getReservation(@Args('reservationId') reservationId: string, @AuthMember('_id') memberId: ObjectId) {
+		return this.reservationService.getReservation(reservationId, memberId);
+	}
 }

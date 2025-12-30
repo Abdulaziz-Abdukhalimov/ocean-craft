@@ -59,10 +59,18 @@ export const ReservationSchema = new Schema(
 			enum: PaymentMethod,
 			required: true,
 		},
+		paymentInfo: {
+			cardholderName: String,
+			cardLastFour: String,
+			_id: false,
+		},
 		paymentStatus: {
 			type: String,
 			enum: PaymentStatus,
 			default: PaymentStatus.PENDING,
+		},
+		paymentProcessedAt: {
+			type: Date,
 		},
 
 		status: {
@@ -70,11 +78,17 @@ export const ReservationSchema = new Schema(
 			enum: EventStatus,
 			default: EventStatus.CONFIRMED,
 		},
+		bookingReference: {
+			type: String,
+			unique: true,
+			required: true,
+		},
 	},
 	{ timestamps: true },
 );
 
 ReservationSchema.index({ eventId: 1, reservationDate: 1 });
 ReservationSchema.index({ memberId: 1, status: 1 });
+ReservationSchema.index({ bookingReference: 1 });
 
 export default ReservationSchema;

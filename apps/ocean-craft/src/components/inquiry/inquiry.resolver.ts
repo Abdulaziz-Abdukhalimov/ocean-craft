@@ -13,6 +13,7 @@ import { GraphQLInt } from 'graphql';
 import { InquiriesResponse, Inquiry } from '../../libs/dto/inquiry/inquiry';
 import { AuthMember } from '../auth/decoraters/authMember.decorater';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { Reservation } from '../../libs/dto/reservation/reservation';
 
 @Resolver()
 export class InquiryResolver {
