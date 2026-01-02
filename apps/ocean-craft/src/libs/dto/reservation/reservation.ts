@@ -75,3 +75,48 @@ export class Reservation {
 	@Field(() => Date)
 	updatedAt: Date;
 }
+
+// @ObjectType()
+// export class EventRevenueBreakdown {
+// 	@Field(() => String)
+// 	eventId: string;
+
+// 	@Field(() => String)
+// 	eventTitle: string;
+
+// 	@Field(() => Number)
+// 	bookings: number;
+
+// 	@Field(() => Number)
+// 	revenue: number;
+// }
+
+@ObjectType()
+export class ReservationStatistics {
+	@Field(() => Number)
+	totalBookings: number;
+
+	@Field(() => Number)
+	totalRevenue: number;
+
+	@Field(() => Number)
+	pendingPayments: number;
+
+	@Field(() => Number)
+	totalGuests: number;
+}
+
+@ObjectType()
+export class AgentReservationsResponse {
+	@Field(() => [Reservation])
+	list: Reservation[];
+
+	@Field(() => Number)
+	total: number;
+
+	@Field(() => Number)
+	page: number;
+
+	@Field(() => Number)
+	totalPages: number;
+}

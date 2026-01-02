@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Event } from '../../libs/dto/event/event';
 import { Reservation } from '../../libs/dto/reservation/reservation';
-import { CreateReservationInput } from '../../libs/dto/reservation/reservation.input';
+import { AgentReservationInquiry, CreateReservationInput } from '../../libs/dto/reservation/reservation.input';
 import { EventStatus, PaymentMethod, PaymentStatus } from '../../libs/enums/event.enum';
 
 @Injectable()
@@ -149,7 +149,7 @@ export class ReservationService {
 		return `OCN-${date}-${random}`;
 	}
 
-	//Helper: Get available dates for an event
+	// Get available dates for an event
 	public async getAvailableDates(eventId: string): Promise<any[]> {
 		const event = await this.eventModel.findById(eventId);
 		if (!event) throw new Error('Event not found');
@@ -206,6 +206,167 @@ export class ReservationService {
 		if (!reservation) {
 			throw new Error('Reservation not found or access denied');
 		}
+
+		return reservation;
+	}
+
+	public async cancelReservation(reservationId: string, memberId: ObjectId): Promise<Reservation> {
+		const reservation = await this.reservationModel.findOne({
+			_id: reservationId,
+			memberId: memberId,
+		});
+
+		if (!reservation) {
+			throw new Error('Reservation not found');
+		}
+
+		if (reservation.status === EventStatus.CANCELLED) {
+			throw new Error('Reservation already cancelled');
+		}
+
+		await this.slotModel.findByIdAndUpdate(reservation.slotId, {
+			$inc: {
+				bookedCapacity: -reservation.numberOfPeople,
+				remainingCapacity: reservation.numberOfPeople,
+			},
+		});
+
+		reservation.status = EventStatus.CANCELLED;
+		await reservation.save();
+
+		return reservation;
+	}
+
+	//AGENT
+	public async getAgentReservations(agentId: ObjectId, input?: AgentReservationInquiry): Promise<any> {
+		const { page, limit, status, paymentStatus, search } = input || {};
+
+		const agentEvents = await this.eventModel.find({ memberId: agentId }).select('_id');
+		const agentEventIds = agentEvents.map((e) => e._id);
+
+		if (agentEventIds.length === 0) {
+			return {
+				list: [],
+				total: 0,
+				page,
+				totalPages: 0,
+			};
+		}
+
+		const filter: any = {
+			eventId: { $in: agentEventIds },
+			status: { $ne: EventStatus.DELETED },
+		};
+
+		if (status) filter.status = status;
+		if (paymentStatus) filter.paymentStatus = paymentStatus;
+
+		if (search) {
+			filter.$or = [
+				{ bookingReference: { $regex: search, $options: 'i' } },
+				{ 'contactPerson.fullName': { $regex: search, $options: 'i' } },
+				{ 'contactPerson.email': { $regex: search, $options: 'i' } },
+			];
+		}
+
+		const total = await this.reservationModel.countDocuments(filter);
+
+		const list = await this.reservationModel
+			.find(filter)
+			.sort({ reservationDate: -1, createdAt: -1 })
+			.skip((page - 1) * limit)
+			.limit(limit)
+			.lean();
+
+		return {
+			list,
+			total,
+			page,
+			totalPages: Math.ceil(total / limit),
+		};
+	}
+
+	public async getAgentReservation(reservationId: string, agentId: ObjectId): Promise<Reservation> {
+		const reservation = await this.reservationModel.findById(reservationId).populate('eventId');
+
+		if (!reservation) {
+			throw new Error('Reservation not found');
+		}
+		const event = reservation.eventId as any;
+
+		if (event.memberId.toString() !== agentId.toString()) {
+			throw new Error('Access denied');
+		}
+
+		return reservation;
+	}
+
+	public async getReservationStatistics(agentId: ObjectId): Promise<any> {
+		const agentEvents = await this.eventModel.find({ memberId: agentId }).select('_id');
+		const agentEventIds = agentEvents.map((e) => e._id);
+
+		if (agentEventIds.length === 0) {
+			return {
+				totalBookings: 0,
+				totalRevenue: 0,
+				pendingPayments: 0,
+				totalGuests: 0,
+			};
+		}
+
+		const stats = await this.reservationModel.aggregate([
+			{
+				$match: {
+					eventId: { $in: agentEventIds },
+					status: { $ne: EventStatus.DELETED },
+				},
+			},
+			{
+				$group: {
+					_id: null,
+					totalBookings: { $sum: 1 },
+					totalRevenue: {
+						$sum: {
+							$cond: [{ $eq: ['$paymentStatus', PaymentStatus.PAID] }, '$totalAmount', 0],
+						},
+					},
+					pendingPayments: {
+						$sum: {
+							$cond: [{ $eq: ['$paymentStatus', PaymentStatus.PENDING] }, '$totalAmount', 0],
+						},
+					},
+					totalGuests: { $sum: '$numberOfPeople' },
+				},
+			},
+		]);
+
+		return {
+			totalBookings: stats[0]?.totalBookings || 0,
+			totalRevenue: stats[0]?.totalRevenue || 0,
+			pendingPayments: stats[0]?.pendingPayments || 0,
+			totalGuests: stats[0]?.totalGuests || 0,
+		};
+	}
+
+	public async updateReservationStatus(
+		reservationId: string,
+		status: EventStatus,
+		agentId: ObjectId,
+	): Promise<Reservation> {
+		const reservation = await this.reservationModel.findById(reservationId).populate('eventId');
+
+		if (!reservation) {
+			throw new Error('Reservation not found');
+		}
+
+		const event = reservation.eventId as any;
+
+		if (event.memberId.toString() !== agentId.toString()) {
+			throw new Error('Access denied');
+		}
+
+		reservation.status = status;
+		await reservation.save();
 
 		return reservation;
 	}

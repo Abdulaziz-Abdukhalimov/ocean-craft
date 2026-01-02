@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Length, Min } from 'class-validator';
-import { PaymentMethod } from '../../enums/event.enum';
+import { EventStatus, PaymentMethod, PaymentStatus } from '../../enums/event.enum';
 import { ObjectId } from 'mongoose';
 
 @InputType()
@@ -52,4 +52,37 @@ export class CreateReservationInput {
 	@Field(() => PaymentInfo, { nullable: true })
 	@IsOptional()
 	paymentInfo?: PaymentInfo;
+}
+
+@InputType()
+export class ReservationInquiry {
+	@Field(() => Number, { defaultValue: 1 })
+	page: number;
+
+	@Field(() => Number)
+	limit: number;
+
+	@Field(() => String, { nullable: true })
+	status?: EventStatus;
+
+	@Field(() => String, { nullable: true })
+	paymentStatus?: PaymentStatus;
+}
+
+@InputType()
+export class AgentReservationInquiry {
+	@Field(() => Number, { defaultValue: 1 })
+	page: number;
+
+	@Field(() => Number)
+	limit: number;
+
+	@Field(() => String, { nullable: true })
+	status?: EventStatus;
+
+	@Field(() => String, { nullable: true })
+	paymentStatus?: PaymentStatus;
+
+	@Field(() => String, { nullable: true })
+	search?: string;
 }
