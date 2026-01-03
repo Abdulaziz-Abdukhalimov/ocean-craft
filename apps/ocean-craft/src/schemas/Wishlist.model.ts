@@ -3,7 +3,7 @@ import { ItemType } from '../libs/enums/wishlist.enum';
 
 const WishlistSchema = new Schema(
 	{
-		userId: {
+		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,
 			ref: 'Member',
@@ -19,7 +19,7 @@ const WishlistSchema = new Schema(
 			refPath: 'itemType',
 		},
 	},
-	{ timestamps: true, collection: 'wishlists' },
+	{ timestamps: true, collection: 'wishlist' },
 );
 
 WishlistSchema.index({ userId: 1, itemType: 1, itemId: 1 }, { unique: true });
