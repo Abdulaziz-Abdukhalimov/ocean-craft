@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Event } from '../../libs/dto/event/event';
 import { Reservation } from '../../libs/dto/reservation/reservation';
-import { AgentReservationInquiry, CreateReservationInput } from '../../libs/dto/reservation/reservation.input';
+import {
+	AgentReservationInquiry,
+	CreateReservationInput,
+	UpdateReservationStatusInput,
+} from '../../libs/dto/reservation/reservation.input';
 import { EventStatus, PaymentMethod, PaymentStatus } from '../../libs/enums/event.enum';
 
 @Injectable()
@@ -348,18 +352,15 @@ export class ReservationService {
 		};
 	}
 
-	public async updateReservationStatus(
-		reservationId: string,
-		status: EventStatus,
-		agentId: ObjectId,
-	): Promise<Reservation> {
-		const reservation = await this.reservationModel.findById(reservationId).populate('eventId');
+	public async updateReservationStatus(agentId: ObjectId, input: UpdateReservationStatusInput): Promise<Reservation> {
+		const { reservationId, status } = input;
+		const reservation = await this.reservationModel.findById(reservationId);
 
 		if (!reservation) {
 			throw new Error('Reservation not found');
 		}
 
-		const event = reservation.eventId as any;
+		const event = await this.eventModel.findById(reservation.eventId);
 
 		if (event.memberId.toString() !== agentId.toString()) {
 			throw new Error('Access denied');
@@ -368,6 +369,6 @@ export class ReservationService {
 		reservation.status = status;
 		await reservation.save();
 
-		return reservation;
+		return reservation.toObject();
 	}
 }

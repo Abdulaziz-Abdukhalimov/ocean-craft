@@ -86,3 +86,15 @@ export class AgentReservationInquiry {
 	@Field(() => String, { nullable: true })
 	search?: string;
 }
+
+@InputType()
+export class UpdateReservationStatusInput {
+	@IsNotEmpty()
+	@IsString()
+	@Field(() => String)
+	reservationId: string;
+
+	@Field(() => EventStatus)
+	@IsEnum(EventStatus)
+	status: EventStatus;
+}
