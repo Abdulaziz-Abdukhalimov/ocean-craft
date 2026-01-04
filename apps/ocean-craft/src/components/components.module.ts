@@ -9,7 +9,6 @@ import { LikeModule } from './like/like.module';
 import { ViewModule } from './view/view.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { InquiryModule } from './inquiry/inquiry.module';
-import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
 	imports: [
@@ -23,7 +22,6 @@ import { WishlistModule } from './wishlist/wishlist.module';
 		ViewModule,
 		ReservationModule,
 		InquiryModule,
-		WishlistModule,
 	],
 })
 export class ComponentsModule {}
