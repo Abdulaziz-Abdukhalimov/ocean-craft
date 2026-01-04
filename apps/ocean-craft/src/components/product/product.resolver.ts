@@ -20,10 +20,16 @@ import { shapeIntoMongoObjectId } from '../../libs/config';
 import { ProductUpdate } from '../../libs/dto/product/product.update';
 import { ProductPriceType } from '../../libs/enums/product.enum';
 import { AuthGuard } from '../auth/guards/auth.guard';
+import { AllFavorites } from '../../libs/dto/like/like';
+import { AllFavoritesInquiry } from '../../libs/dto/like/like.input';
+import { LikeService } from '../like/like.service';
 
 @Resolver()
 export class ProductResolver {
-	constructor(private readonly productService: ProductService) {}
+	constructor(
+		private readonly productService: ProductService,
+		private readonly likeService: LikeService,
+	) {}
 
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)
@@ -100,6 +106,16 @@ export class ProductResolver {
 	): Promise<Products> {
 		console.log('Query: getFavoriteProducts');
 		return await this.productService.getFavoritesProducts(memberId, input);
+	}
+
+	@UseGuards(AuthGuard)
+	@Query(() => AllFavorites)
+	public async getAllFavorites(
+		@Args('input') input: AllFavoritesInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<AllFavorites> {
+		console.log('query: getAllFavorites');
+		return await this.likeService.getAllFavorites(memberId, input);
 	}
 
 	/** ADMIN **/

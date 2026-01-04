@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Like, MeLiked } from '../../libs/dto/like/like';
+import { AllFavorites, Like, MeLiked } from '../../libs/dto/like/like';
 import { Model, ObjectId } from 'mongoose';
-import { LikeInput } from '../../libs/dto/like/like.input';
+import { AllFavoritesInquiry, LikeInput } from '../../libs/dto/like/like.input';
 import { T } from '../../libs/types/common';
 import { Message } from '../../libs/enums/common.enum';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -109,5 +109,82 @@ export class LikeService {
 		const result: Events = { list: [], metaCounter: data[0].metaCounter };
 		result.list = data[0].list.map((ele) => ele.favoriteEvent);
 		return result;
+	}
+
+	public async getAllFavorites(memberId: ObjectId, input: AllFavoritesInquiry): Promise<AllFavorites> {
+		const { page, limit, likeGroup } = input;
+
+		const match: any = { memberId };
+		if (likeGroup) {
+			match.likeGroup = likeGroup;
+		}
+
+		const data = await this.likeModel.aggregate([
+			{ $match: match },
+			{ $sort: { createdAt: -1 } },
+
+			{
+				$lookup: {
+					from: 'products',
+					localField: 'likeRefId',
+					foreignField: '_id',
+					as: 'productData',
+				},
+			},
+
+			{
+				$lookup: {
+					from: 'events',
+					localField: 'likeRefId',
+					foreignField: '_id',
+					as: 'eventData',
+				},
+			},
+
+			{
+				$addFields: {
+					productData: {
+						$cond: {
+							if: { $eq: ['$likeGroup', 'PRODUCT'] },
+							then: { $arrayElemAt: ['$productData', 0] },
+							else: null,
+						},
+					},
+					eventData: {
+						$cond: {
+							if: { $eq: ['$likeGroup', 'EVENT'] },
+							then: { $arrayElemAt: ['$eventData', 0] },
+							else: null,
+						},
+					},
+					itemType: '$likeGroup',
+				},
+			},
+
+			{
+				$facet: {
+					list: [
+						{ $skip: (page - 1) * limit },
+						{ $limit: limit },
+						{
+							$project: {
+								_id: 1,
+								likeRefId: 1,
+								itemType: 1,
+								productData: 1,
+								eventData: 1,
+								createdAt: 1,
+							},
+						},
+					],
+					metaCounter: [{ $count: 'total' }],
+				},
+			},
+		]);
+
+		return {
+			list: data[0].list || [],
+			metaCounter: data[0].metaCounter || [{ total: 0 }],
+		};
 	}
 }
