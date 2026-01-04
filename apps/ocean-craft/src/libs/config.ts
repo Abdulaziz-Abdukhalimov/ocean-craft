@@ -113,6 +113,15 @@ export const lookupFavorite = {
 	},
 };
 
+export const lookupFavoriteEvent = {
+	$lookup: {
+		from: 'members',
+		localField: 'favoriteEvent.memberId',
+		foreignField: '_id',
+		as: 'favoriteEvent.memberData',
+	},
+};
+
 export const lookupMember = {
 	$lookup: {
 		from: 'members',

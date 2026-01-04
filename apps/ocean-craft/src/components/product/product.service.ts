@@ -6,6 +6,7 @@ import { Direction, Message } from '../../libs/enums/common.enum';
 import { Product, Products } from '../../libs/dto/product/product';
 import {
 	AllProductsInquiry,
+	OrdinaryInquiry,
 	ProductInput,
 	ProductsInquiry,
 	SellerProductsInquiry,
@@ -199,6 +200,10 @@ export class ProductService {
 
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
+	}
+
+	public async getFavoritesProducts(memberId: ObjectId, input: OrdinaryInquiry): Promise<Products> {
+		return await this.likeService.getFavoriteProducts(memberId, input);
 	}
 
 	/* ADMIN */

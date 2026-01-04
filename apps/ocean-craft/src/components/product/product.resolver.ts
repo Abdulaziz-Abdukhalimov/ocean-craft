@@ -10,6 +10,7 @@ import { Product, Products } from '../../libs/dto/product/product';
 import { ObjectId } from 'mongoose';
 import {
 	AllProductsInquiry,
+	OrdinaryInquiry,
 	ProductInput,
 	ProductsInquiry,
 	SellerProductsInquiry,
@@ -89,6 +90,16 @@ export class ProductResolver {
 		console.log('Mutation: likeTargetProduct');
 		const likeRefId = shapeIntoMongoObjectId(input);
 		return await this.productService.likeTargetProduct(memberId, likeRefId);
+	}
+
+	@UseGuards(AuthGuard)
+	@Query((returns) => Products)
+	public async getFavoritesProducts(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Products> {
+		console.log('Query: getFavorites');
+		return await this.productService.getFavoritesProducts(memberId, input);
 	}
 
 	/** ADMIN **/
