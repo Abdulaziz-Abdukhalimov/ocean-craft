@@ -19,6 +19,7 @@ import { EventUpdate } from '../../libs/dto/event/event.update';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { EventStatus } from '../../libs/enums/event.enum';
+import { OrdinaryInquiry } from '../../libs/dto/product/product.input';
 
 @Resolver()
 export class EventResolver {
@@ -84,6 +85,16 @@ export class EventResolver {
 		console.log('Mutation: likeTargetEvent');
 		const likeRefId = shapeIntoMongoObjectId(input);
 		return await this.eventService.likeTargetEvent(memberId, likeRefId);
+	}
+
+	@UseGuards(AuthGuard)
+	@Query((returns) => Events)
+	public async getFavoriteEvents(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Events> {
+		console.log('Query: getFavoriteEvents');
+		return await this.eventService.getFavoriteEvents(memberId, input);
 	}
 
 	//Admin

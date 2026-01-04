@@ -98,7 +98,7 @@ export class ProductResolver {
 		@Args('input') input: OrdinaryInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Products> {
-		console.log('Query: getFavorites');
+		console.log('Query: getFavoriteProducts');
 		return await this.productService.getFavoritesProducts(memberId, input);
 	}
 

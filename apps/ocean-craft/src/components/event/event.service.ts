@@ -22,6 +22,7 @@ import * as moment from 'moment';
 import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
+import { OrdinaryInquiry } from '../../libs/dto/product/product.input';
 
 @Injectable()
 export class EventService {
@@ -283,6 +284,10 @@ export class EventService {
 
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;
+	}
+
+	public async getFavoriteEvents(memberId: ObjectId, input: OrdinaryInquiry): Promise<Events> {
+		return await this.likeService.getFavoriteEvents(memberId, input);
 	}
 
 	//ADMIN
