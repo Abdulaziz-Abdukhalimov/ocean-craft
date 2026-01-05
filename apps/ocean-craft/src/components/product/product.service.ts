@@ -21,14 +21,17 @@ import { lookupAuthMemberLiked, lookupMember, shapeIntoMongoObjectId } from '../
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class ProductService {
 	constructor(
 		@InjectModel('Product') private readonly productModel: Model<Product>,
-		private memberService: MemberService,
-		private viewService: ViewService,
-		private likeService: LikeService,
+		private readonly memberService: MemberService,
+		private readonly viewService: ViewService,
+		private readonly likeService: LikeService,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	public async createProduct(input: ProductInput): Promise<Product> {
@@ -197,6 +200,18 @@ export class ProductService {
 		//LIKE TOGGLE
 		const modifier: number = await this.likeService.toggleLike(input);
 		const result = await this.productStatsEditor({ _id: likeRefId, targetKey: 'productLikes', modifier: modifier });
+
+		if (modifier === 1) {
+			await this.notificationService.createNotification({
+				receiverId: target.memberId,
+				authorId: memberId,
+				notificationType: NotificationType.LIKE,
+				notificationGroup: NotificationGroup.PRODUCT,
+				notificationTitle: `Someone liked your ${target.productTitle}`,
+				notificationDesc: `Your product received a new like!`,
+				productId: likeRefId,
+			});
+		}
 
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
 		return result;

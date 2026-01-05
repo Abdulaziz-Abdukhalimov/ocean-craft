@@ -1,6 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsOptional, IsIn, Min } from 'class-validator';
 import { NotificationStatus, NotificationType, NotificationGroup } from '../../enums/notification.enum';
+import { ObjectId } from 'mongoose';
 
 @InputType()
 export class NotificationInquiry {
@@ -21,10 +22,10 @@ export class NotificationInquiry {
 @InputType()
 export class CreateNotificationInput {
 	@Field(() => String)
-	receiverId: string;
+	receiverId: ObjectId;
 
 	@Field(() => String)
-	authorId: string;
+	authorId: ObjectId;
 
 	@Field(() => String)
 	notificationType: NotificationType;
@@ -39,11 +40,11 @@ export class CreateNotificationInput {
 	notificationDesc?: string;
 
 	@Field(() => String, { nullable: true })
-	productId?: string;
+	productId?: ObjectId;
 
 	@Field(() => String, { nullable: true })
-	eventId?: string;
+	eventId?: ObjectId;
 
 	@Field(() => String, { nullable: true })
-	inquiryId?: string;
+	inquiryId?: ObjectId;
 }
