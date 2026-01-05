@@ -15,12 +15,15 @@ import { InquiriesResponse, Inquiry } from '../../libs/dto/inquiry/inquiry';
 import { Product } from '../../libs/dto/product/product';
 import { Message } from '../../libs/enums/common.enum';
 import { InquiryStatus } from '../../libs/enums/productInquiry.enum';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class InquiryService {
 	constructor(
 		@InjectModel('Inquiry') private readonly inquiryModel: Model<Inquiry>,
 		@InjectModel('Product') private readonly productModel: Model<Product>,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	// BUYER:
@@ -43,6 +46,17 @@ export class InquiryService {
 				preferredContactMethod: preferredContactMethod || 'ANY',
 				status: InquiryStatus.PENDING,
 				isRead: false,
+			});
+
+			await this.notificationService.createNotification({
+				receiverId: product.memberId,
+				authorId: buyerId,
+				notificationType: NotificationType.PRODUCT_INQUIRY,
+				notificationGroup: NotificationGroup.INQUIRY,
+				notificationTitle: `New inquiry about "${product.productTitle}"`,
+				notificationDesc: inquiryMessage.substring(0, 100),
+				productId: productId,
+				inquiryId: inquiry._id,
 			});
 
 			return inquiry;

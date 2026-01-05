@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { MemberModule } from '../member/member.module';
 import { ProductModule } from '../product/product.module';
 import ProductSchema from '../../schemas/Product.model';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import ProductSchema from '../../schemas/Product.model';
 		]),
 		AuthModule,
 		MemberModule,
+		NotificationModule,
 	],
 	providers: [InquiryResolver, InquiryService],
 	exports: [InquiryService],
