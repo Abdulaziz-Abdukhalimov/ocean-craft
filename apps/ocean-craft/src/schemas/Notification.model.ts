@@ -1,5 +1,6 @@
 import { Schema } from 'mongoose';
 import { NotificationGroup, NotificationStatus, NotificationType } from '../libs/enums/notification.enum';
+import { ref } from 'process';
 
 const NotificationSchema = new Schema(
 	{
@@ -50,6 +51,15 @@ const NotificationSchema = new Schema(
 		eventId: {
 			type: Schema.Types.ObjectId,
 			ref: 'Event',
+		},
+
+		inquiryId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Inquiry',
+		},
+
+		readAt: {
+			type: Date,
 		},
 	},
 	{ timestamps: true, collection: 'notifications' },
