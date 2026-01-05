@@ -27,11 +27,9 @@ export class CreateNotificationInput {
 	authorId: string;
 
 	@Field(() => String)
-	@IsIn(Object.values(NotificationType))
 	notificationType: NotificationType;
 
 	@Field(() => String)
-	@IsIn(Object.values(NotificationGroup))
 	notificationGroup: NotificationGroup;
 
 	@Field(() => String)
