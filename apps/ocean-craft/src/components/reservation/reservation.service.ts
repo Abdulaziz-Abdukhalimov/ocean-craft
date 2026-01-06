@@ -146,7 +146,7 @@ export class ReservationService {
 				notificationGroup: NotificationGroup.EVENT,
 				notificationTitle: `New booking for "${event.eventTitle}"`,
 				notificationDesc: `${fullName} booked ${numberOfPeople} spot${numberOfPeople > 1 ? 's' : ''} for ${selectedDate.toDateString()}`,
-				eventId: eventId,
+				notifRefId: eventId,
 			});
 
 			return reservation;

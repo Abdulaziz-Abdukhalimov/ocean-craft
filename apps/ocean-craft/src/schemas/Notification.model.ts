@@ -43,19 +43,9 @@ const NotificationSchema = new Schema(
 			ref: 'Member',
 		},
 
-		productId: {
+		notifRefId: {
 			type: Schema.Types.ObjectId,
-			ref: 'Product',
-		},
-
-		eventId: {
-			type: Schema.Types.ObjectId,
-			ref: 'Event',
-		},
-
-		inquiryId: {
-			type: Schema.Types.ObjectId,
-			ref: 'Inquiry',
+			required: false,
 		},
 
 		readAt: {

@@ -55,8 +55,7 @@ export class InquiryService {
 				notificationGroup: NotificationGroup.INQUIRY,
 				notificationTitle: `New inquiry about "${product.productTitle}"`,
 				notificationDesc: inquiryMessage.substring(0, 100),
-				productId: productId,
-				inquiryId: inquiry._id,
+				notifRefId: inquiry._id,
 			});
 
 			return inquiry;

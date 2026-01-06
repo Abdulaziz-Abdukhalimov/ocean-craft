@@ -209,7 +209,7 @@ export class ProductService {
 				notificationGroup: NotificationGroup.PRODUCT,
 				notificationTitle: `Someone liked your ${target.productTitle}`,
 				notificationDesc: `Your product received a new like!`,
-				productId: likeRefId,
+				notifRefId: likeRefId,
 			});
 		}
 

@@ -13,12 +13,15 @@ import {
 	lookupFollowerData,
 	lookupFollowingData,
 } from '../../libs/config';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class FollowService {
 	constructor(
 		@InjectModel('Follow') private readonly followModel: Model<Follower | Following>,
 		private readonly memberService: MemberService,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	public async subscribe(followerId: ObjectId, followingId: ObjectId): Promise<Follower> {
@@ -29,10 +32,22 @@ export class FollowService {
 		const targetMember = await this.memberService.getMember(null, followingId);
 		if (!targetMember) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
+		const follower = await this.memberService.getMember(null, followerId);
+
 		const result = await this.registerSubscription(followerId, followingId);
 
 		await this.memberService.memberStatsEditor({ _id: followerId, targetKey: 'memberFollowings', modifier: 1 });
 		await this.memberService.memberStatsEditor({ _id: followingId, targetKey: 'memberFollowers', modifier: 1 });
+
+		await this.notificationService.createNotification({
+			receiverId: followingId, // Person being followed
+			authorId: followerId, // Person who followed
+			notificationType: NotificationType.MEMBER_FOLLOW,
+			notificationGroup: NotificationGroup.MEMBER,
+			notificationTitle: `${follower?.memberNick || 'Someone'} started following you`,
+			notificationDesc: 'Checkout their profile!',
+			notifRefId: result._id,
+		});
 
 		return result;
 	}

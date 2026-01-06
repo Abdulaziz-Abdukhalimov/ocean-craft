@@ -295,7 +295,7 @@ export class EventService {
 				notificationGroup: NotificationGroup.EVENT,
 				notificationTitle: `Someone liked your "${target.eventTitle}"`,
 				notificationDesc: `Your event received a new like!`,
-				eventId: likeRefId,
+				notifRefId: likeRefId,
 			});
 		}
 

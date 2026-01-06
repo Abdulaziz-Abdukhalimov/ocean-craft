@@ -40,11 +40,5 @@ export class CreateNotificationInput {
 	notificationDesc?: string;
 
 	@Field(() => String, { nullable: true })
-	productId?: ObjectId;
-
-	@Field(() => String, { nullable: true })
-	eventId?: ObjectId;
-
-	@Field(() => String, { nullable: true })
-	inquiryId?: ObjectId;
+	notifRefId?: ObjectId;
 }

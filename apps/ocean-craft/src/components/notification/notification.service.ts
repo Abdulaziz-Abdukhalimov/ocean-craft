@@ -3,11 +3,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { NotificationInquiry, CreateNotificationInput } from '../../libs/dto/notification/notification.input';
 import { NotificationType, NotificationGroup, NotificationStatus } from '../../libs/enums/notification.enum';
-import { NotificationsResponse } from '../../libs/dto/notification/notification';
+import { Notification, NotificationsResponse } from '../../libs/dto/notification/notification';
+import { Product } from '../../libs/dto/product/product';
+import { Event } from '../../libs/dto/event/event';
 
 @Injectable()
 export class NotificationService {
-	constructor(@InjectModel('Notification') private readonly notificationModel: Model<Notification>) {}
+	constructor(
+		@InjectModel('Notification') private readonly notificationModel: Model<Notification>,
+		@InjectModel('Product') private readonly productModel: Model<Product>,
+		@InjectModel('Event') private readonly eventModel: Model<Event>,
+	) {}
 
 	public async createNotification(input: CreateNotificationInput): Promise<Notification> {
 		try {
@@ -37,14 +43,36 @@ export class NotificationService {
 			.skip((page - 1) * limit)
 			.limit(limit)
 			.populate('authorId', 'memberNick memberImage memberPhone')
-			.populate('productId', 'productTitle productImages')
-			.populate('eventId', 'eventTitle eventImages')
 			.lean();
+
+		const populatedNotifications = await Promise.all(
+			notifications.map(async (notif: Notification) => {
+				// Populate product data
+				if (notif.notificationGroup === NotificationGroup.PRODUCT && notif.notifRefId) {
+					const product = await this.productModel
+						.findById(notif.notifRefId)
+						.select('productTitle productImages productPrice')
+						.lean();
+					return { ...notif, productData: product };
+				}
+
+				// Populate event data
+				if (notif.notificationGroup === NotificationGroup.EVENT && notif.notifRefId) {
+					const event = await this.eventModel
+						.findById(notif.notifRefId)
+						.select('eventTitle eventImages eventPrice')
+						.lean();
+					return { ...notif, eventData: event };
+				}
+
+				return notif;
+			}),
+		);
 
 		const total = await this.notificationModel.countDocuments(match);
 
 		return {
-			list: notifications as any,
+			list: populatedNotifications as any,
 			metaCounter: [{ total }],
 		};
 	}

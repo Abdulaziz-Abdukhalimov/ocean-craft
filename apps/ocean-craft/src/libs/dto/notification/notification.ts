@@ -32,13 +32,7 @@ export class Notification {
 	receiverId: ObjectId;
 
 	@Field(() => String, { nullable: true })
-	productId?: ObjectId;
-
-	@Field(() => String, { nullable: true })
-	eventId?: ObjectId;
-
-	@Field(() => String, { nullable: true })
-	inquiryId?: ObjectId;
+	notifRefId?: ObjectId;
 
 	@Field(() => Date, { nullable: true })
 	readAt?: Date;
