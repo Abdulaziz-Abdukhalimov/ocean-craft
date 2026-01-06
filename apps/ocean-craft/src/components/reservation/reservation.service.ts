@@ -9,6 +9,8 @@ import {
 	UpdateReservationStatusInput,
 } from '../../libs/dto/reservation/reservation.input';
 import { EventStatus, PaymentMethod, PaymentStatus } from '../../libs/enums/event.enum';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class ReservationService {
@@ -16,6 +18,7 @@ export class ReservationService {
 		@InjectModel('Reservation') private reservationModel: Model<Reservation>,
 		@InjectModel('EventSlot') private slotModel: Model<any>,
 		@InjectModel('Event') private eventModel: Model<Event>,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	public async bookEvent(memberId: ObjectId, input: CreateReservationInput): Promise<Reservation> {
@@ -133,6 +136,17 @@ export class ReservationService {
 				paymentProcessedAt,
 				status: EventStatus.CONFIRMED,
 				bookingReference,
+			});
+
+			// CREATE NOTIFICATION FOR EVENT ORGANIZER
+			await this.notificationService.createNotification({
+				receiverId: event.memberId,
+				authorId: memberId,
+				notificationType: NotificationType.EVENT_BOOKING_RECEIVED,
+				notificationGroup: NotificationGroup.EVENT,
+				notificationTitle: `New booking for "${event.eventTitle}"`,
+				notificationDesc: `${fullName} booked ${numberOfPeople} spot${numberOfPeople > 1 ? 's' : ''} for ${selectedDate.toDateString()}`,
+				eventId: eventId,
 			});
 
 			return reservation;

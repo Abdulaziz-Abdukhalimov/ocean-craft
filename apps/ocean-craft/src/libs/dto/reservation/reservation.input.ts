@@ -22,7 +22,7 @@ export class PaymentInfo {
 export class CreateReservationInput {
 	@Field(() => String)
 	@IsNotEmpty()
-	eventId: string;
+	eventId: ObjectId;
 
 	@Field(() => String)
 	@IsNotEmpty()

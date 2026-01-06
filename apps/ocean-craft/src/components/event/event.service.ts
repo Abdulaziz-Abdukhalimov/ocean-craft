@@ -23,6 +23,8 @@ import { LikeService } from '../like/like.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { OrdinaryInquiry } from '../../libs/dto/product/product.input';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationGroup, NotificationType } from '../../libs/enums/notification.enum';
 
 @Injectable()
 export class EventService {
@@ -32,6 +34,7 @@ export class EventService {
 		private readonly viewService: ViewService,
 		private readonly memberService: MemberService,
 		private readonly likeService: LikeService,
+		private readonly notificationService: NotificationService,
 	) {}
 
 	//seller services
@@ -283,6 +286,19 @@ export class EventService {
 		});
 
 		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+
+		if (modifier === 1) {
+			await this.notificationService.createNotification({
+				receiverId: target.memberId,
+				authorId: memberId,
+				notificationType: NotificationType.LIKE,
+				notificationGroup: NotificationGroup.EVENT,
+				notificationTitle: `Someone liked your "${target.eventTitle}"`,
+				notificationDesc: `Your event received a new like!`,
+				eventId: likeRefId,
+			});
+		}
+
 		return result;
 	}
 

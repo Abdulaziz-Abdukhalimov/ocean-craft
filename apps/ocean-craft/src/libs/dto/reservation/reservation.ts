@@ -15,10 +15,10 @@ export class ContactPerson {
 
 @ObjectType()
 export class PaymentInfoResponse {
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	cardholderName: string;
 
-	@Field(() => String)
+	@Field(() => String, { nullable: true })
 	cardLastFour: string;
 }
 

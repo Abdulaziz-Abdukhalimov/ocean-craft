@@ -6,6 +6,7 @@ import { ReservationSchema } from '../../schemas/EventReservation.model';
 import EventSlotSchema from '../../schemas/EventSlot.model';
 import EventSchema from '../../schemas/Event.model';
 import { AuthModule } from '../auth/auth.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from '../auth/auth.module';
 			{ name: 'Event', schema: EventSchema },
 		]),
 		AuthModule,
+		NotificationModule,
 	],
 	providers: [ReservationResolver, ReservationService],
 })
