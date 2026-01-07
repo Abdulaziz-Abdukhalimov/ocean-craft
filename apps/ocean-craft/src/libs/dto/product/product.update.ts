@@ -92,11 +92,11 @@ export class ProductUpdate {
 	@Field(() => Boolean, { nullable: true })
 	productRent?: boolean;
 
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	productBuildYear?: string;
+
 	soldAt?: Date;
 
 	deletedAt?: Date;
-
-	@IsOptional()
-	@Field(() => Date, { nullable: true })
-	buildAt?: Date;
 }

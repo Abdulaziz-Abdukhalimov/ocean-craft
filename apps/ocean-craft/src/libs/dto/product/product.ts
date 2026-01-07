@@ -82,11 +82,11 @@ export class Product {
 	@Field(() => Boolean)
 	productRent: boolean;
 
-	@Field(() => Date, { nullable: true })
-	soldAt?: Date;
+	@Field(() => String, { nullable: true })
+	productBuildYear?: string;
 
 	@Field(() => Date, { nullable: true })
-	buildAt?: Date;
+	soldAt?: Date;
 
 	@Field(() => Date, { nullable: true })
 	deletedAt?: Date;

@@ -37,16 +37,16 @@ export class ProductInput {
 	@Field(() => String)
 	productModel: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@Length(3, 50)
 	@Field(() => String, { nullable: true })
 	productEngineType?: string;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@Field(() => Number, { nullable: true })
 	productSpeed?: number;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@Field(() => Number, { nullable: true })
 	productLength?: number;
 
@@ -54,7 +54,7 @@ export class ProductInput {
 	@Field(() => ProductPriceType)
 	productPriceType: ProductPriceType;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@Field(() => ProductRentPeriod, { nullable: true })
 	productRentPeriod?: ProductRentPeriod;
 
@@ -88,8 +88,8 @@ export class ProductInput {
 	memberId?: ObjectId;
 
 	@IsOptional()
-	@Field(() => Date, { nullable: true })
-	buildAt?: Date;
+	@Field(() => String, { nullable: true })
+	productBuildYear?: string;
 }
 
 @InputType()

@@ -142,9 +142,9 @@ export class ProductResolver {
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)
 	@Mutation((returns) => Product)
-	public async removeProductByAdmin(@Args('propertyId') input: string): Promise<Product> {
+	public async removeProductByAdmin(@Args('productId') input: string): Promise<Product> {
 		console.log('Mutation: removeProductByAdmin');
-		const propertyId = shapeIntoMongoObjectId(input);
-		return await this.productService.removeProductByAdmin(propertyId);
+		const productId = shapeIntoMongoObjectId(input);
+		return await this.productService.removeProductByAdmin(productId);
 	}
 }

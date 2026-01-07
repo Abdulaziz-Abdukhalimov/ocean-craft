@@ -106,8 +106,8 @@ const ProductSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
-		buildAt: {
-			type: Date,
+		productBuildYear: {
+			type: String,
 		},
 		soldAt: {
 			type: Date,
