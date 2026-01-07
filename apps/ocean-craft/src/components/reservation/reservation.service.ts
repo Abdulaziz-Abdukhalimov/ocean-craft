@@ -138,6 +138,10 @@ export class ReservationService {
 				bookingReference,
 			});
 
+			await this.eventModel.findByIdAndUpdate(eventId, {
+				$inc: { eventRank: 10 },
+			});
+
 			// CREATE NOTIFICATION FOR EVENT ORGANIZER
 			await this.notificationService.createNotification({
 				receiverId: event.memberId,
