@@ -214,7 +214,7 @@ export class EventsInquiry {
 	@Field(() => Direction, { nullable: true })
 	direction?: Direction;
 
-	@IsNotEmpty()
+	@IsOptional()
 	@Field(() => EISearch)
 	search: EISearch;
 }

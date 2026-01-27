@@ -149,7 +149,14 @@ export class ProductService {
 
 		if (pricesRange) match.productPrice = { $gte: pricesRange.start, $lte: pricesRange.end };
 
-		if (text) match.productTitle = { $regex: new RegExp(text, 'i') };
+		if (text) {
+			match.$or = [
+				{ productTitle: { $regex: text, $options: 'i' } },
+				{ productBrand: { $regex: text, $options: 'i' } },
+				{ productCategory: { $regex: text, $options: 'i' } },
+			];
+		}
+
 		if (location) match.productAddress = { $regex: new RegExp(location, 'i') };
 		if (productPriceType) match.productPriceType = productPriceType;
 	}

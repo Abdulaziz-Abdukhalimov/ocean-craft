@@ -158,5 +158,5 @@ export const availableProductSorts = [
 	'productPrice',
 ];
 
-export const availableEventSorts = ['createdAt', 'updatedAt', 'eventLikes', 'eventViews'];
+export const availableEventSorts = ['createdAt', 'updatedAt', 'eventLikes', 'eventViews', 'eventRank', 'eventPrice'];
 export const availableCommentSorts = ['createdAt', 'updatedAt'];
