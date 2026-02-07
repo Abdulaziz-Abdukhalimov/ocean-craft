@@ -6,6 +6,7 @@ import { NotificationType, NotificationGroup, NotificationStatus } from '../../l
 import { Notification, NotificationsResponse } from '../../libs/dto/notification/notification';
 import { Product } from '../../libs/dto/product/product';
 import { Event } from '../../libs/dto/event/event';
+import { NotificationGateway } from '../../socket/notification.gateway';
 
 @Injectable()
 export class NotificationService {
@@ -13,6 +14,7 @@ export class NotificationService {
 		@InjectModel('Notification') private readonly notificationModel: Model<Notification>,
 		@InjectModel('Product') private readonly productModel: Model<Product>,
 		@InjectModel('Event') private readonly eventModel: Model<Event>,
+		private readonly notificationGateway: NotificationGateway,
 	) {}
 
 	public async createNotification(input: CreateNotificationInput): Promise<Notification> {
@@ -22,6 +24,12 @@ export class NotificationService {
 			}
 
 			const notification = await this.notificationModel.create(input);
+
+			// SOCKET.IO: Send real-time notification to user
+			this.notificationGateway.sendNotificationToUser(input.receiverId.toString(), notification);
+
+			console.log(`✅ Notification created and sent via Socket.IO to user ${input.receiverId}`);
+
 			return notification;
 		} catch (err) {
 			console.log('Error creating notification:', err);
