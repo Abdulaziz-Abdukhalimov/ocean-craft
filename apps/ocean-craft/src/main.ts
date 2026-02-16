@@ -18,9 +18,9 @@ async function bootstrap() {
 	app.useGlobalPipes(
 		new ValidationPipe({
 			whitelist: true,
-			forbidNonWhitelisted: false, // Change to false temporarily
+			forbidNonWhitelisted: false,
 			transform: true,
-			disableErrorMessages: false, // Make sure this is false
+			disableErrorMessages: false,
 		}),
 	);
 	app.useGlobalInterceptors(new LoggingInterceptor());
