@@ -15,7 +15,14 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 5 }));
 
-	app.useGlobalPipes(new ValidationPipe());
+	app.useGlobalPipes(
+		new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: false, // Change to false temporarily
+			transform: true,
+			disableErrorMessages: false, // Make sure this is false
+		}),
+	);
 	app.useGlobalInterceptors(new LoggingInterceptor());
 
 	app.enableCors({ origin: true, credentials: true });

@@ -112,6 +112,9 @@ export class LikeService {
 	}
 
 	public async getAllFavorites(memberId: ObjectId, input: AllFavoritesInquiry): Promise<AllFavorites> {
+		console.log('📥 INPUT:', JSON.stringify(input));
+		console.log('📊 Types:', typeof input.page, typeof input.limit);
+
 		const { page, limit, likeGroup } = input;
 
 		const match: any = { memberId };

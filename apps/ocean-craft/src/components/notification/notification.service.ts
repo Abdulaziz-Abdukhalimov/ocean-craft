@@ -45,32 +45,60 @@ export class NotificationService {
 			match.notificationStatus = notificationStatus;
 		}
 
-		const notifications = await this.notificationModel
-			.find(match)
-			.sort({ createdAt: -1 })
-			.skip((page - 1) * limit)
-			.limit(limit)
-			.populate('authorId', 'memberNick memberImage memberPhone')
-			.lean();
+		const notifications = await this.notificationModel.aggregate([
+			{ $match: match },
+			{ $sort: { createdAt: -1 } },
+			{ $skip: (page - 1) * limit },
+			{ $limit: limit },
+			{
+				$lookup: {
+					from: 'members',
+					localField: 'authorId',
+					foreignField: '_id',
+					as: 'authorData',
+				},
+			},
+			{ $unwind: { path: '$authorData', preserveNullAndEmptyArrays: true } },
+			{
+				$project: {
+					_id: 1,
+					notificationType: 1,
+					notificationStatus: 1,
+					notificationGroup: 1,
+					notificationTitle: 1,
+					notificationDesc: 1,
+					authorId: 1,
+					receiverId: 1,
+					notifRefId: 1,
+					readAt: 1,
+					createdAt: 1,
+					updatedAt: 1,
+					'authorData._id': 1,
+					'authorData.memberNick': 1,
+					'authorData.memberImage': 1,
+					'authorData.memberPhone': 1,
+					'authorData.memberType': 1,
+				},
+			},
+		]);
 
+		// Populate product/event data
 		const populatedNotifications = await Promise.all(
-			notifications.map(async (notif: Notification) => {
-				// Populate product data
+			notifications.map(async (notif: any) => {
 				if (notif.notificationGroup === NotificationGroup.PRODUCT && notif.notifRefId) {
 					const product = await this.productModel
 						.findById(notif.notifRefId)
-						.select('productTitle productImages productPrice')
+						.select('productTitle productImages productPrice memberId')
 						.lean();
-					return { ...notif, productData: product };
+					notif.productData = product;
 				}
 
-				// Populate event data
 				if (notif.notificationGroup === NotificationGroup.EVENT && notif.notifRefId) {
 					const event = await this.eventModel
 						.findById(notif.notifRefId)
-						.select('eventTitle eventImages eventPrice')
+						.select('eventTitle eventImages eventPrice memberId')
 						.lean();
-					return { ...notif, eventData: event };
+					notif.eventData = event;
 				}
 
 				return notif;

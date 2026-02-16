@@ -1,7 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsInt, IsNotEmpty, IsOptional, Min } from 'class-validator';
 import { ObjectId } from 'mongoose';
 import { LikeGroup } from '../../enums/like.enum';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class LikeInput {
@@ -20,10 +21,16 @@ export class LikeInput {
 
 @InputType()
 export class AllFavoritesInquiry {
-	@Field(() => Number, { defaultValue: 1 })
+	@Field(() => Int)
+	@IsInt()
+	@Min(1)
+	@Type(() => Number)
 	page: number;
 
-	@Field(() => Number)
+	@Field(() => Int)
+	@IsInt()
+	@Min(1)
+	@Type(() => Number)
 	limit: number;
 
 	@IsOptional()

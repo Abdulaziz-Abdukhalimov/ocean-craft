@@ -157,15 +157,6 @@ class EventRequirementsInput {
 	experienceLevel?: EventExperienceLevel;
 }
 
-// @InputType()
-// export class PriceRange {
-// 	@Field(() => Int)
-// 	start: number;
-
-// 	@Field(() => Int)
-// 	end: number;
-// }
-
 @InputType()
 class EISearch {
 	@IsOptional()
@@ -297,19 +288,6 @@ export class AllEventsInquiry {
 	search: AEISearch;
 }
 
-// @InputType()
-// export class OrdinaryInquiry {
-// 	@IsNotEmpty()
-// 	@Min(1)
-// 	@Field(() => Int)
-// 	page: number;
-
-// 	@IsNotEmpty()
-// 	@Min(1)
-// 	@Field(() => Int)
-// 	limit: number;
-// }
-
 @ObjectType()
 export class MetaData {
 	@Field(() => Int, { nullable: true })
@@ -424,12 +402,6 @@ export class EventCreate {
 	@Length(10, 1000)
 	@Field(() => String, { nullable: true })
 	eventCancellationPolicy?: string;
-
-	// NEW: Optional originalLanguage (will be set automatically in service)
-	// @IsOptional()
-	// @IsEnum(['ko', 'en', 'uz', 'ru'])
-	// @Field(() => String, { nullable: true })
-	// originalLanguage?: string;
 
 	// This will be set automatically from context
 	memberId?: ObjectId;

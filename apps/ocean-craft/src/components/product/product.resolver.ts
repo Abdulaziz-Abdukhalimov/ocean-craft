@@ -39,6 +39,11 @@ export class ProductResolver {
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Product> {
 		console.log('Mutation: createProduct');
+		console.log('==========================================');
+		console.log('CreateProduct called');
+		console.log('MemberId:', memberId);
+		console.log('Input received:', JSON.stringify(input, null, 2));
+		console.log('==========================================');
 		input.memberId = memberId;
 		if (input.productPriceType === ProductPriceType.RENT && !input.productRentPeriod) {
 			throw new BadRequestException('Rent period is required for rental products');

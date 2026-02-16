@@ -14,7 +14,7 @@ import { EventStatus } from '../../libs/enums/event.enum';
 import { Event } from '../../libs/dto/event/event';
 import { EventUpdate } from '../../libs/dto/event/event.update';
 import { StatisticModifier, T } from '../../libs/types/common';
-import { lookupMember, lookupMember1 } from '../../libs/config';
+import { lookupMember, lookupMember1, shapeIntoMongoObjectId } from '../../libs/config';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { ViewService } from '../view/view.service';
 import { MemberService } from '../member/member.service';
@@ -214,11 +214,11 @@ export class EventService {
 		try {
 			const { page, limit, sort, direction, search } = input;
 			const match: any = {
-				eventStatus: EventStatus.ACTIVE,
+				eventStatus: { $ne: EventStatus.DELETED },
 			};
 
 			// Search filters
-			if (search.memberId) match.businessId = search.memberId;
+			if (search.memberId) match.memberId = shapeIntoMongoObjectId(search.memberId);
 			if (search.categoryList && search.categoryList.length > 0) {
 				match.eventCategory = { $in: search.categoryList };
 			}
@@ -235,6 +235,8 @@ export class EventService {
 			if (search.text) {
 				match.$text = { $search: search.text };
 			}
+
+			console.log('match:', JSON.stringify(match));
 
 			// Sorting
 			const sortCriteria: any = { [sort ?? 'createdAt']: direction ?? Direction.DESC };
@@ -260,6 +262,7 @@ export class EventService {
 
 			if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
+			console.log('result:', JSON.stringify(result));
 			return result[0];
 		} catch (err) {
 			console.log('Error, Service.getEvents:', err.message);
