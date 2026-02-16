@@ -1,0 +1,36 @@
+services:
+  ocean-craft:
+    container_name: ocean-craft
+    restart: always
+    image: node:20.11.1
+    ports:
+      - 4002:3009
+    volumes:
+      - ./:/usr/src/oceancraft
+    working_dir: /usr/src/oceancraft
+
+    networks:
+      - monorepo-network
+
+    # FOR PRODUCTION
+    command: bash -c "npm install && npm run build && npm run start:prod"
+
+  ocean-craft-batch:
+    container_name: ocean-craft-batch
+    restart: unless-stopped
+    image: node:20.11.1
+    ports:
+      - 4003:4000
+    volumes:
+      - ./:/usr/src/oceancraft
+    working_dir: /usr/src/oceancraft
+
+    networks:
+      - monorepo-network
+
+    #FOR PRODUCTION
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+
+networks:
+  monorepo-network:
+    driver: bridge
