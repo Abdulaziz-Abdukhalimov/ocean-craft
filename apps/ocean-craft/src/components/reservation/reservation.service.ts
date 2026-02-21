@@ -261,7 +261,7 @@ export class ReservationService {
 
 	//AGENT
 	public async getAgentReservations(agentId: ObjectId, input?: AgentReservationInquiry): Promise<any> {
-		const { page, limit, status, paymentStatus, search } = input || {};
+		const { page = 1, limit = 10, status, paymentStatus, search } = input || {};
 
 		const agentEvents = await this.eventModel.find({ memberId: agentId }).select('_id');
 		const agentEventIds = agentEvents.map((e) => e._id);
@@ -270,7 +270,7 @@ export class ReservationService {
 			return {
 				list: [],
 				total: 0,
-				page,
+				page: page,
 				totalPages: 0,
 			};
 		}
