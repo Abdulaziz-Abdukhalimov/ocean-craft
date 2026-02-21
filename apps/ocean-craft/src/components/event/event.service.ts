@@ -262,7 +262,6 @@ export class EventService {
 
 			if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 
-			console.log('result:', JSON.stringify(result));
 			return result[0];
 		} catch (err) {
 			console.log('Error, Service.getEvents:', err.message);

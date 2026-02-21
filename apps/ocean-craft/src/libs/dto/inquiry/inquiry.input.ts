@@ -24,7 +24,8 @@ export class ContactPersonInput {
 @InputType()
 export class CreateInquiryInput {
 	@Field(() => String)
-	productId: ObjectId;
+	@IsNotEmpty()
+	productId: string;
 
 	@IsNotEmpty()
 	@Field(() => ContactPersonInput)

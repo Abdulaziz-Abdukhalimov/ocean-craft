@@ -19,14 +19,15 @@ import { Reservation } from '../../libs/dto/reservation/reservation';
 export class InquiryResolver {
 	constructor(private readonly inquiryService: InquiryService) {}
 
-	// BUYER
+	//BUYER
 	@UseGuards(AuthGuard)
 	@Mutation(() => Inquiry)
 	public async createInquiry(
 		@Args('input') input: CreateInquiryInput,
 		@AuthMember('_id') buyerId: ObjectId,
 	): Promise<Inquiry> {
-		console.log('Mutation: createInquiry');
+		console.log('Mutation: CreateInquiry');
+		input.productId = shapeIntoMongoObjectId(input.productId);
 		return await this.inquiryService.createInquiry(buyerId, input);
 	}
 

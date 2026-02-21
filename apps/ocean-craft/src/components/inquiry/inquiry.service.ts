@@ -6,11 +6,17 @@ import {
 	InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { isValidObjectId, Model, ObjectId } from 'mongoose';
 import { CreateInquiryInput, InquiriesInput } from '../../libs/dto/inquiry/inquiry.input';
 import { ReplyInquiryInput } from '../../libs/dto/inquiry/inquiry.input';
 import { UpdateInquiryStatusInput } from '../../libs/dto/inquiry/inquiry.input';
-import { lookupAuthMemberLiked, lookupMember, lookupMember1, lookupProduct } from '../../libs/config';
+import {
+	lookupAuthMemberLiked,
+	lookupMember,
+	lookupMember1,
+	lookupProduct,
+	shapeIntoMongoObjectId,
+} from '../../libs/config';
 import { InquiriesResponse, Inquiry } from '../../libs/dto/inquiry/inquiry';
 import { Product } from '../../libs/dto/product/product';
 import { Message } from '../../libs/enums/common.enum';
@@ -26,10 +32,13 @@ export class InquiryService {
 		private readonly notificationService: NotificationService,
 	) {}
 
-	// BUYER:
+	//BUYER:
 	public async createInquiry(buyerId: ObjectId, input: CreateInquiryInput): Promise<Inquiry> {
 		try {
 			const { productId, contactPerson, inquiryMessage, preferredContactMethod } = input;
+			if (!isValidObjectId(productId)) {
+				throw new BadRequestException('Invalid product ID');
+			}
 
 			const product = await this.productModel.findOne({ _id: productId });
 
@@ -61,6 +70,9 @@ export class InquiryService {
 			return inquiry;
 		} catch (error) {
 			console.error('Error creating inquiry:', error);
+			if (error instanceof NotFoundException || error instanceof BadRequestException) {
+				throw error;
+			}
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 	}
