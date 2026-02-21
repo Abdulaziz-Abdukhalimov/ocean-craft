@@ -46,6 +46,7 @@ export class CreateInquiryInput {
 @InputType()
 export class ReplyInquiryInput {
 	@Field(() => String)
+	@IsNotEmpty()
 	inquiryId: string;
 
 	@IsNotEmpty()

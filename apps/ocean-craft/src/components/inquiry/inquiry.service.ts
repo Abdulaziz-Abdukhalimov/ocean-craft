@@ -79,7 +79,7 @@ export class InquiryService {
 
 	public async getMyInquiries(buyerId: ObjectId, input: InquiriesInput): Promise<InquiriesResponse> {
 		try {
-			const { page, limit, filter } = input;
+			const { page = 1, limit = 10, filter } = input;
 			const skip = (page - 1) * limit;
 
 			const match: any = { buyerId };
@@ -122,7 +122,7 @@ export class InquiryService {
 	// SELLER:
 	public async getReceivedInquiries(sellerId: ObjectId, input: InquiriesInput): Promise<InquiriesResponse> {
 		try {
-			const { page, limit, filter } = input;
+			const { page = 1, limit = 10, filter } = input;
 			const skip = (page - 1) * limit;
 
 			const match: any = { sellerId };
@@ -213,6 +213,15 @@ export class InquiryService {
 			);
 
 			// TODO: Send email notification to buyer
+			await this.notificationService.createNotification({
+				receiverId: inquiry.buyerId,
+				authorId: inquiry.sellerId,
+				notificationType: NotificationType.PRODUCT_INQUIRY_RESPONDED,
+				notificationGroup: NotificationGroup.INQUIRY,
+				notificationTitle: `Seller relied for your inquiry: "${inquiry.inquiryMessage}"`,
+				notificationDesc: inquiry.sellerReply.substring(0, 100),
+				notifRefId: inquiry._id,
+			});
 
 			return updated;
 		} catch (error) {
