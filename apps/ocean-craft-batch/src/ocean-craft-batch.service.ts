@@ -11,7 +11,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class OceanCraftBatchService {
 	constructor(
-		@InjectModel('Property') private readonly productModel: Model<Product>,
+		@InjectModel('Product') private readonly productModel: Model<Product>,
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		@InjectModel('Event') private readonly eventModel: Model<Event>,
 	) {}
