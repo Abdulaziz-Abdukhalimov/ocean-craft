@@ -17,7 +17,7 @@ export class OceanCraftBatchService {
 	) {}
 
 	public async batchRollback(): Promise<void> {
-		await this.productModel.updateMany({ propertyStatus: ProductStatus.ACTIVE }, { productRank: 0 }).exec();
+		await this.productModel.updateMany({ productStatus: ProductStatus.ACTIVE }, { productRank: 0 }).exec();
 
 		await this.memberModel
 			.updateMany({ memberStatus: MemberStatus.ACTIVE, memberType: MemberType.AGENT }, { memberRank: 0 })
