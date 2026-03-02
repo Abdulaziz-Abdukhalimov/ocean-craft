@@ -12,7 +12,7 @@ import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
 	cors: {
-		origin: 'http://localhost:4001',
+		origin: ['https://ocean-marinecraft.com', 'http://localhost:4001'],
 		credentials: true,
 	},
 	namespace: 'notifications',
