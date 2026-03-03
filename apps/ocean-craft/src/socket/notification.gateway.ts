@@ -16,6 +16,7 @@ import { Logger } from '@nestjs/common';
 		credentials: true,
 	},
 	namespace: 'notifications',
+	transports: ['websocket', 'polling'],
 })
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
